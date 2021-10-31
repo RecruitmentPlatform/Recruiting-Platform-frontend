@@ -174,7 +174,7 @@ export default function PrimarySearchAppBar() {
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            Recruiting Platform
+            Recruitment Platform
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Search>

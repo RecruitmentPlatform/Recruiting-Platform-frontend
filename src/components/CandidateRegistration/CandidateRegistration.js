@@ -1,13 +1,13 @@
 import React from "react";
-// import {Link} from "react-router-dom";
-// import TextField from '@mui/material/TextField';
+import {Link} from "react-router-dom";
+import TextField from '@mui/material/TextField';
 
 const CandidateRegistration = () =>{
 
     return (<div className="candidate-registration-container">
                 <h1 >Registration</h1>
                 <form>
-                    <div className="candidate-registration-name-flex"> 
+                    <div className="candidate-registration-name-flex">
                         <div>
                             <p>First Name</p>
                             <input/>
@@ -39,7 +39,7 @@ const CandidateRegistration = () =>{
                     <div className="candidate-registration-button-container">
                         <button className="candidate-registration-btn">REGISTER</button>
                     </div>
-                </form>       
+                </form>
             </div>)
 }
 
