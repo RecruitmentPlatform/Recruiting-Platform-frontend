@@ -55,23 +55,14 @@ const Signup = () => {
                                 name="candidate"
                                 onClick={changeType}>I'm a Job Seeker</button>
                     </div>
-                    <div className="form-container-input">
-                        <TextField
-                            name = "username"
-                            required
-                            id="outlined-required"
-                            label="Username"
-                            variant="outlined"
-                            style = {{width: "100%"}}
-                            onChange={inputHandler}
-                        />
-                    </div>
+
                     <div className="form-container-input">
                         <TextField
                             name = "email"
                             required
                             id="outlined-required"
                             label="Email"
+                            type="email"
                             variant="outlined"
                             style = {{width: "100%"}}
                             onChange={inputHandler}
