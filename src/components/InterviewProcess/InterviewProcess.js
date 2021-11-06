@@ -6,11 +6,7 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 
-<<<<<<< Updated upstream
 export default function InterviewProcess() {
-=======
-export default function ColorsTimeline() {
->>>>>>> Stashed changes
   return (
     <Timeline position="alternate">
       <TimelineItem>

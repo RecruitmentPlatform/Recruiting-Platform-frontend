@@ -1,12 +1,11 @@
 import {React, useState} from "react";
 import TextField from '@mui/material/TextField';
-<<<<<<< HEAD
+
 import {Link, useHistory } from "react-router-dom"; //for routing
+//import { Link  } from "react-router-dom"; //for routing
 import axios from "axios"
-=======
-import { Link  } from "react-router-dom"; //for routing
 import Grid from '@mui/material/Grid';
->>>>>>> 111bb71ab98803f05167bab04e4d8e804222c44f
+
 
 const Signup = () => {
 
@@ -64,7 +63,7 @@ const Signup = () => {
                             label="Username"
                             variant="outlined"
                             style = {{width: "100%"}}
-                            onChange={inputHandler} 
+                            onChange={inputHandler}
                         />
                     </div>
                     <div className="form-container-input">
@@ -75,7 +74,7 @@ const Signup = () => {
                             label="Email"
                             variant="outlined"
                             style = {{width: "100%"}}
-                            onChange={inputHandler} 
+                            onChange={inputHandler}
                         />
                     </div>
                     <div className="form-container-input">
@@ -87,7 +86,7 @@ const Signup = () => {
                             variant="outlined"
                             type="password"
                             style = {{width: "100%"}}
-                            onChange={inputHandler} 
+                            onChange={inputHandler}
                         />
                     </div>
                     <button className="signup-btn">Sign up</button>
