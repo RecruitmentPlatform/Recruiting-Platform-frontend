@@ -1,12 +1,8 @@
 import {React, useState} from "react";
 import TextField from '@mui/material/TextField';
-<<<<<<< HEAD
-import {Link, useHistory } from "react-router-dom"; //for routing
-import axios from "axios"
-=======
-import { Link  } from "react-router-dom"; //for routing
+import { Link, useHistory  } from "react-router-dom"; //for routing
 import Grid from '@mui/material/Grid';
->>>>>>> 111bb71ab98803f05167bab04e4d8e804222c44f
+import axios from "axios"
 
 const Signup = () => {
 
@@ -27,7 +23,7 @@ const Signup = () => {
         console.log(userData)
         if (userData.status === "success"){
             sessionStorage.setItem("session_id", userData.session_id)
-            history.push("/")
+            history.push("/search")
         }else{
             setHelperMessage(userData.message)
             history.push("/signup")

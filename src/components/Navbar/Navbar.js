@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Link } from "react-router-dom";
+
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -63,6 +65,10 @@ export default function PrimarySearchAppBar() {
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const logout = () => {
+    sessionStorage.removeItem("session_id");
+  };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -228,9 +234,11 @@ export default function PrimarySearchAppBar() {
           <Button
             variant="h5"
             noWrap
-            component="div"
             style={{"marginLeft":"10px", "fontSize": "20px", "textTransform": "none"}}
             sx={{ display: { xs: 'none', sm: 'block' } }}
+            onClick={logout}
+            component={Link} 
+            to="/signup"
           >
             Logout
           </Button>
