@@ -6,8 +6,7 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 
-
-export default function ColorsTimeline() {
+export default function InterviewProcess() {
   return (
     <Timeline position="alternate">
       <TimelineItem>

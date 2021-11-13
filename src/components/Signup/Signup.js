@@ -1,8 +1,11 @@
 import {React, useState} from "react";
 import TextField from '@mui/material/TextField';
-import { Link, useHistory  } from "react-router-dom"; //for routing
-import Grid from '@mui/material/Grid';
+
+import {Link, useHistory } from "react-router-dom"; //for routing
+//import { Link  } from "react-router-dom"; //for routing
 import axios from "axios"
+import Grid from '@mui/material/Grid';
+
 
 const Signup = () => {
 
@@ -17,6 +20,7 @@ const Signup = () => {
     }
 
     const submitHandler = async (e) => {
+        console.log(userInput)
         e.preventDefault();
         const response = await axios.post('http://127.0.0.1:5000/api/signup', userInput);
         const userData = response.data
@@ -52,26 +56,17 @@ const Signup = () => {
                                 name="candidate"
                                 onClick={changeType}>I'm a Job Seeker</button>
                     </div>
-                    <div className="form-container-input">
-                        <TextField
-                            name = "username"
-                            required
-                            id="outlined-required"
-                            label="Username"
-                            variant="outlined"
-                            style = {{width: "100%"}}
-                            onChange={inputHandler} 
-                        />
-                    </div>
+
                     <div className="form-container-input">
                         <TextField
                             name = "email"
                             required
                             id="outlined-required"
                             label="Email"
+                            type="email"
                             variant="outlined"
                             style = {{width: "100%"}}
-                            onChange={inputHandler} 
+                            onChange={inputHandler}
                         />
                     </div>
                     <div className="form-container-input">
@@ -83,7 +78,7 @@ const Signup = () => {
                             variant="outlined"
                             type="password"
                             style = {{width: "100%"}}
-                            onChange={inputHandler} 
+                            onChange={inputHandler}
                         />
                     </div>
                     <button className="signup-btn">Sign up</button>

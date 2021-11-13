@@ -14,7 +14,7 @@ const Login = () => {
     //     }
     // }
 
-    const [userInput, setUserInput] = useState({"username":"","password":""})
+    const [userInput, setUserInput] = useState({"email":"","password":""})
     const [helperMessage, setHelperMessage] = useState("")
     const history = useHistory();
 
@@ -41,13 +41,14 @@ const Login = () => {
         <h1 className="login-title">Login</h1>
             <div className="form-container-input">
                 <TextField
-                    name = "username"
+                    name = "email"
                     required
                     id="outlined-required"
-                    label="Username"
+                    label="Email"
+                    type="email"
                     variant="outlined"
                     style = {{width: "100%"}}
-                    onChange={inputHandler} 
+                    onChange={inputHandler}
                 />
             </div>
             <div className="form-container-input">
