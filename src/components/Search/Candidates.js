@@ -1,5 +1,6 @@
 import {React, Fragment, useEffect, useState} from "react";
-import axios from "axios"
+import axios from "axios";
+import {useHistory} from "react-router-dom";
 // import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -17,7 +18,7 @@ export default function Candidates() {
   
   const [candidate, setCandidate] = useState([])
   const [helperMessage, setHelperMessage] = useState("")
-
+  const history = useHistory()
   const sampleCandidateList = [{"id":"1", "first_name":"John", "last_name":"Doe", "email":"123@email.com", "position":"Full Stack Developer", "location":"Los Angeles"}, 
                                {"id":"2", "first_name":"Jane", "last_name":"Doe", "email":"456@email.com", "position":"Web Developer", "location":"Dallas"},
                                {"id":"3", "first_name":"Vitamin", "last_name":"Water", "email":"789@email.com", "position":"Data Engineer", "location":"San Jose"}]
@@ -34,6 +35,18 @@ export default function Candidates() {
     }
     f()
   },[])
+
+  const clickHandler = (c) => {
+    history.push({
+      pathname: '/search/candidate',
+      search: `?query=id${c.id}`,
+      state: { id: c.id }
+    })
+  }
+
+
+
+
 
   return (<div>
   
@@ -69,7 +82,7 @@ export default function Candidates() {
                   </ListItem> */}
 
                   {/* sample -- > render multiple items */}
-                  {sampleCandidateList.map((c, idx) => {return (<div>
+                  {sampleCandidateList.map((c, idx) => {return (<div onClick={() => clickHandler(c)}>
                                                                   <ProfileCard 
                                                                     key = {idx}
                                                                     first_name = {c.first_name}

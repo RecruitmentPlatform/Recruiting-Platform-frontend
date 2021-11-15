@@ -18,6 +18,7 @@ import Recruiters from "./components/Search/Recruiters";
 import Companies from "./components/Search/Companies";
 import InterviewProcess from "./components/InterviewProcess/InterviewProcess";
 
+import Candidate from "./components/Candidate/Candidate";
 import CandidateRegistration from "./components/CandidateRegistration/CandidateRegistration";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route path="/search" exact component={Jobs}/>
         <Route path="/registration/candidate" exact component={CandidateRegistration}/>
         <Route path="/interview/process" exact component={InterviewProcess}/>
+        <Route path="/search/candidate" exact component={Candidate}/>
         <Signup/>
       </Switch>
     </Router>
