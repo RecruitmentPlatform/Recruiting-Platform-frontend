@@ -1,39 +1,48 @@
 import {React, useState, useEffect} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
+import { gql, useQuery } from '@apollo/client';
 
+
+const GET_CANDIDATE = gql`
+  query  Candidate($id:Int!){
+            candidate(id:$id){
+            id
+            first
+            last
+            email
+            phone
+            hash
+            description
+          }
+        }
+        `;
 
 const Candidate = () => {
     const location = useLocation();
-    const [helperMessage, setHelperMessage] = useState("")
-    const [canidateInfo, setCandidateInfo] = useState({ "id": "", "first_name": "", "last_name": "", "email": "", "phone": "",
-                                                      "gender_id": "", "gender_pronoun_id": "", "ethnicity_id": "", "description": "",});
+    const id = location.state.id;
+    const { loading, error, data } = useQuery(GET_CANDIDATE, {variables:{id}});
     const [isNull, setIsNull] = useState(false);
 
-    useEffect(()=>{
-        const f = async () => {
-            const res = await axios.get(`http://127.0.0.1:5000/api/candidates/id/${location.state.id}`);
-            const data = res.data;
-            console.log(data)
-            if(data.status === "fail"){
-                setHelperMessage(data.message);
-                setIsNull(true);
-            }else{ 
-                const candidate = data.candidate;
-                setCandidateInfo({...canidateInfo, "id": candidate.id, "first_name": candidate.first_name,  "last_name":candidate.last_name, 
-                                                   "email": candidate.email, "phone":candidate.phone,
-                                                   "gender_id": candidate.gender_id, "gender_pronoun_id": candidate.gender_pronoun_id,
-                                                    "ethnicity_id":candidate.ethnicity_id, "description":candidate.description})
-                setIsNull(false);
-            }
-        }
-        f()
-    },[location])
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
 
-    return(<div>
-            {isNull ? <h3>{helperMessage}</h3> : null}
-            {!isNull ? Object.entries(canidateInfo).map(([key, value]) =><p>{key} : {value}</p>) : null}
-           </div>)
+    return(
+            <div className="profile-page-card">
+                <h1 className="profile-page-title">{data.candidate.first + " " + data.candidate.last}</h1>
+                <div className="profile-page-info">
+                    <p>・Email : {data.candidate.email}</p>
+                    <p>・Phone: {data.candidate.phone}</p>
+                    <p>・Gender: {data.candidate.gender_id}</p>
+                    <p>・Pronoun: {data.candidate.gender_pronoun_id}</p>
+                    <p>・Ethnicity: {data.candidate.ethnicity_id}</p>
+                    <p>・Description: {data.candidate.description}</p>
+                </div>
+                <div className="profile-page-button-flex">
+                    <button className="profile-page-button-call">Call</button>
+                    <button className="profile-page-button-email">Email</button>
+                </div>
+            </div>)
 }
 
 export default Candidate;

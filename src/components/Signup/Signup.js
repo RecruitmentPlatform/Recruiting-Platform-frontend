@@ -4,12 +4,30 @@ import TextField from '@mui/material/TextField';
 import {Link, useHistory } from "react-router-dom"; //for routing
 //import { Link  } from "react-router-dom"; //for routing
 import axios from "axios"
+import { gql, useQuery } from '@apollo/client';
 import Grid from '@mui/material/Grid';
 
+const SIGN_UP_CANDIDATE = gql`
+  mutation {
+    addTodo(email: $email, password: $password) {
+      email
+      password
+    }
+  }
+`;
+
+// const SIGN_UP_RECRUITER = gql`
+//   mutation createRecruiter($email: String!, $password: String!) {
+//     addTodo(email: $email, password: $password) {
+//       email
+//       password
+//     }
+//   }
+// `;
 
 const Signup = () => {
 
-    const [userInput, setUserInput] = useState({"username":"", "email":"","password":""})
+    const [userInput, setUserInput] = useState({"email":"","password":""})
     const [helperMessage, setHelperMessage] = useState("")
     const [signupType, setSignupType] = useState("recruiter");
     const history = useHistory()

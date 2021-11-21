@@ -19,7 +19,8 @@ import Companies from "./components/Search/Companies";
 import InterviewProcess from "./components/InterviewProcess/InterviewProcess";
 
 import Candidate from "./components/Candidate/Candidate";
-import CandidateRegistration from "./components/CandidateRegistration/CandidateRegistration";
+import Job from "./components/Job/Job";
+import UpdateCandidate from "./components/CandidateRegistration/CandidateRegistration";
 
 function App() {
   return (
@@ -37,9 +38,11 @@ function App() {
         <Route path="/search/recruiters" exact component={Recruiters}/>
         <Route path="/search/companies" exact component={Companies}/>
         <Route path="/search" exact component={Jobs}/>
-        <Route path="/registration/candidate" exact component={CandidateRegistration}/>
+        <Route path="/registration/candidate" exact component={UpdateCandidate}/>
         <Route path="/interview/process" exact component={InterviewProcess}/>
         <Route path="/search/candidate" exact component={Candidate}/>
+        <Route path="/search/job" exact component={Job}/>
+        {/* <Route path="/search/recruiter" exact component={Recruiter}/> */}
         <Signup/>
       </Switch>
     </Router>

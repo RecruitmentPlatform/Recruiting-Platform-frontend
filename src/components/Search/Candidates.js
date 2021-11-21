@@ -12,29 +12,28 @@ import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Grid from '@mui/material/Grid';
 
-import ProfileCard from "../ProfileCard/ProfileCard";
+import ProfileCard from "../Card/ProfileCard";
 
-export default function Candidates() {
-  
-  const [candidate, setCandidate] = useState([])
-  const [helperMessage, setHelperMessage] = useState("")
+import { gql, useQuery } from '@apollo/client';
+
+const GET_CANDIDATES = gql`
+  query  Candidates{
+            candidates{
+            id
+            first
+            last
+            email
+            hash
+          }
+        }
+        `;
+
+export default function Candidates (){
   const history = useHistory()
-  const sampleCandidateList = [{"id":"1", "first_name":"John", "last_name":"Doe", "email":"123@email.com", "position":"Full Stack Developer", "location":"Los Angeles"}, 
-                               {"id":"2", "first_name":"Jane", "last_name":"Doe", "email":"456@email.com", "position":"Web Developer", "location":"Dallas"},
-                               {"id":"3", "first_name":"Vitamin", "last_name":"Water", "email":"789@email.com", "position":"Data Engineer", "location":"San Jose"}]
-  
-  useEffect(() => {
-    const f = async() => {
-      const res = await axios.get("http://127.0.0.1:5000/api/candidates/all");
-      const data = res.data;
-      if(data.status === "fail"){
-        setHelperMessage(data.message)
-      }else{
-        setCandidate(data.candidate)
-      }
-    }
-    f()
-  },[])
+  const { loading, error, data } = useQuery(GET_CANDIDATES);
+
+  if (loading) return 'Loading...';
+  if (error) return `Error! ${error.message}`;
 
   const clickHandler = (c) => {
     history.push({
@@ -44,12 +43,7 @@ export default function Candidates() {
     })
   }
 
-
-
-
-
   return (<div>
-  
           <Grid container>
             <Grid item xs>
             </Grid>
@@ -57,64 +51,17 @@ export default function Candidates() {
               Candidate
               <nav className="searchResults" aria-label="search results">
                 <List>
-                  {/* <ListItem disablePadding>
-                    <ListItemButton>
-                    <ListItemAvatar>
-                      <Avatar alt="John Doe" src="https://mui.com/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                      <ListItemText
-                        primary="John Doe"
-                        secondary={
-                          <Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Full Stack Engineer
-                            </Typography>
-                            {" — Los Angeles, CA"}
-                          </Fragment>
-                        }
-                      />
-                    </ListItemButton>
-                  </ListItem> */}
-
-                  {/* sample -- > render multiple items */}
-                  {sampleCandidateList.map((c, idx) => {return (<div onClick={() => clickHandler(c)}>
+                  {data.candidates.map((c, idx) => {return (<div onClick={() => clickHandler(c)}>
                                                                   <ProfileCard 
                                                                     key = {idx}
-                                                                    first_name = {c.first_name}
-                                                                    last_name = {c.last_name}
+                                                                    first_name = {c.first}
+                                                                    last_name = {c.last}
                                                                     position = {c.position}
                                                                     location = {c.location}
+                                                                    src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`}
                                                                     />
                                                                 </div>)  
                                                                 })}
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar alt="Jane Doe" src="https://mui.com/static/images/avatar/3.jpg" />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary="Jane Doe"
-                        secondary={
-                          <Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Senior Web Developer
-                            </Typography>
-                            {" — New York, NY"}
-                          </Fragment>
-                        }
-                      />
-                    </ListItemButton>
-                  </ListItem>
                 </List>
               </nav>
             </Grid>
@@ -122,4 +69,5 @@ export default function Candidates() {
             </Grid>
           </Grid>
           </div>);
+// 
 }

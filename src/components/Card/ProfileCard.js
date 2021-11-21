@@ -7,13 +7,13 @@ import Avatar from '@mui/material/Avatar';
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 
-const ProfileCard =({first_name, last_name, position, location}) => {
+const ProfileCard =({first_name, last_name, position, location, src, company}) => {
     const full_name = first_name + " " + last_name;
 
     return (<ListItem disablePadding>
         <ListItemButton>
         <ListItemAvatar>
-            <Avatar alt="John Doe" src="https://mui.com/static/images/avatar/1.jpg" />
+            <Avatar alt="John Doe" src={src}/>
         </ListItemAvatar>
             <ListItemText
             primary={full_name}
@@ -27,6 +27,7 @@ const ProfileCard =({first_name, last_name, position, location}) => {
                 >
                     {position}
                 </Typography>
+                {company}
                 {" — " + location}
                 </Fragment>
             }
