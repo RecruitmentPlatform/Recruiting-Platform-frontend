@@ -69,5 +69,4 @@ export default function Candidates (){
             </Grid>
           </Grid>
           </div>);
-// 
 }

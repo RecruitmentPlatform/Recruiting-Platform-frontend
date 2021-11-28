@@ -1,33 +1,15 @@
-import {React, useState} from "react";
-import TextField from '@mui/material/TextField';
-
+import {React, useState, useContext} from "react";
 import {Link, useHistory } from "react-router-dom"; //for routing
-//import { Link  } from "react-router-dom"; //for routing
+import { AuthContext } from "../../AuthContext";
 import axios from "axios"
-import { gql, useQuery } from '@apollo/client';
+
 import Grid from '@mui/material/Grid';
-
-const SIGN_UP_CANDIDATE = gql`
-  mutation {
-    addTodo(email: $email, password: $password) {
-      email
-      password
-    }
-  }
-`;
-
-// const SIGN_UP_RECRUITER = gql`
-//   mutation createRecruiter($email: String!, $password: String!) {
-//     addTodo(email: $email, password: $password) {
-//       email
-//       password
-//     }
-//   }
-// `;
+import TextField from '@mui/material/TextField';
 
 const Signup = () => {
 
-    const [userInput, setUserInput] = useState({"email":"","password":""})
+    const {auth, setAuth} = useContext(AuthContext);
+    const [userInput, setUserInput] = useState({"email":"","password":"", "type":"recruiter"})
     const [helperMessage, setHelperMessage] = useState("")
     const [signupType, setSignupType] = useState("recruiter");
     const history = useHistory()
@@ -37,15 +19,33 @@ const Signup = () => {
         setUserInput({...userInput, [key]:e.target.value});
     }
 
-    const submitHandler = async (e) => {
-        console.log(userInput)
+    // const submitHandler = async (e) => {
+    //     e.preventDefault();
+    //     const response = await axios.post('http://127.0.0.1:5000/api/signup', userInput);
+    //     const userData = response.data
+    //     if (userData.status === "success"){
+    //         setAuth({...auth, session_id:userData.session_id, type:userData.type})
+    //         sessionStorage.setItem("session_id", userData.session_id)
+    //         sessionStorage.setItem("type", userData.type)
+    //         history.push("/search")
+    //     }else{
+    //         setHelperMessage(userData.message)
+    //         history.push("/signup")
+    //     }
+    // }
+
+    const submitHandler =(e) => {
         e.preventDefault();
-        const response = await axios.post('http://127.0.0.1:5000/api/signup', userInput);
-        const userData = response.data
-        console.log(userData)
+        const userData = {status:"success", session_id:"1234567", type:"recruiter"} //dummy signup
         if (userData.status === "success"){
+            setAuth({...auth, session_id:userData.session_id, type:userData.type})
             sessionStorage.setItem("session_id", userData.session_id)
-            history.push("/search")
+            sessionStorage.setItem("type", userData.type)
+            if(userData.type == "recruiter"){
+                history.push("/search/candidates")
+            }else{
+                history.push("/search/jobs")
+            }
         }else{
             setHelperMessage(userData.message)
             history.push("/signup")
@@ -53,11 +53,9 @@ const Signup = () => {
     }
 
     const changeType = (e) => {
-        if(e.target.name === "recruiter"){
-            setSignupType("recruiter");
-        }else{
-            setSignupType("candidate");
-        }
+        setSignupType(e.target.name)
+        console.log(e.target.name)
+        setUserInput({...userInput, ["type"]:e.target.name});
     }
 
     return (<Grid container>

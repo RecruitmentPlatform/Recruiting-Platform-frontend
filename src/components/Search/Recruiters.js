@@ -11,7 +11,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Grid from '@mui/material/Grid';
 
-import ProfileCard from "../ProfileCard/ProfileCard";
+import ProfileCard from "../Card/ProfileCard";
 
 import { gql, useQuery } from '@apollo/client';
 

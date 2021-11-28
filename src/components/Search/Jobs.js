@@ -39,10 +39,7 @@ export default function Jobs() {
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
 
-  console.log(data)
-
   const clickHandler = (o) => {
-    console.log(o)
     history.push({
       pathname: '/search/job',
       search: `?query=id${o.id}`,
@@ -65,8 +62,8 @@ export default function Jobs() {
                                                                     company = {o.company.title}
                                                                     src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`}
                                                                     />
-                                                                </div>)  
-                                                                })}
+                                                            </div>)  
+                                                  })}
                 </List>
               </nav>
             </Grid>

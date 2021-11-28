@@ -1,5 +1,6 @@
-import * as React from 'react';
+import {React, useContext, useState} from 'react';
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../AuthContext";
 
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -60,14 +61,21 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+  const {auth, setAuth} = useContext(AuthContext);
+  const type = sessionStorage.getItem("type")
+  console.log(type)
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const logout = () => {
+    setAuth("")
     sessionStorage.removeItem("session_id");
+    sessionStorage.removeItem("type");
   };
 
   const handleProfileMenuOpen = (event) => {
@@ -162,90 +170,104 @@ export default function PrimarySearchAppBar() {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            Recruitment Platform
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+          {auth ?
             <IconButton
               size="large"
-              aria-label="show 17 new notifications"
+              edge="start"
               color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
             >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
+              <MenuIcon />
             </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
+            : 
+          null}
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
             >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
+              Recruitment Platform
+            </Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            {auth ?
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </Search>
+              :
+              null
+            }
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            {auth ?
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              :null}
+            </Box>
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
+            {auth ?
+            <Button
+              variant="h5"
+              noWrap
+              style={{"marginLeft":"10px", "fontSize": "20px", "textTransform": "none"}}
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+              onClick={logout}
+              component={Link} 
+              to="/signup"
             >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-          <Button
-            variant="h5"
-            noWrap
-            style={{"marginLeft":"10px", "fontSize": "20px", "textTransform": "none"}}
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-            onClick={logout}
-            component={Link} 
-            to="/signup"
-          >
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-    </Box>
+              Logout
+            </Button>
+            :
+            <div>
+                <Button color="inherit" 
+                        label="Signup" 
+                        component={Link} 
+                        to="/signup"
+                        style={{fontSize:"1rem",fontFamily:"Helvetica Neue"}}
+                >
+                  Sign up
+                </Button>
+                <Button color="inherit" 
+                        label="Login" 
+                        component={Link} 
+                        to="/login"　
+                        style={{fontSize:"1rem",fontFamily:"Helvetica Neue", marginRight:10}}
+                >
+                  Login
+                </Button>
+            </div>
+            }
+          </Toolbar>
+        </AppBar>
+      </Box>
   );
 }
