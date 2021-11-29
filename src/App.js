@@ -22,6 +22,8 @@ import Job from "./components/Job/Job";
 import UpdateCandidate from "./components/CandidateRegistration/CandidateRegistration";
 import Sidebar from "./components/Navbar/Sidebar";
 
+import Applications from "./components/Applications/Applications";
+
 import {AuthContext} from "./AuthContext";
 function App() {
 
@@ -59,6 +61,7 @@ function App() {
           <Route path="/search/candidate" exact component={Candidate}/>
           <Route path="/search/job" exact component={Job}/>
           <Route path="/registration/candidate" exact component={UpdateCandidate}/>
+          <Route path="/applications/" exact component={Applications}/>
           </Switch>
         </AuthContext.Provider>
       </Router>
