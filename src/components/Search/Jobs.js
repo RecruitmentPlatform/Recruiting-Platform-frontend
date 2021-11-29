@@ -16,8 +16,6 @@ import Grid from '@mui/material/Grid';
 import JobCard from "../Card/JobCard";
 import { gql, useQuery } from '@apollo/client';
 
-
-
 const GET_OPENINGS = gql`
   query  Openings{
             openings{
@@ -47,29 +45,26 @@ export default function Jobs() {
     })
   }
   return (<div>
-          <Grid container>
-            <Grid item xs>
-            </Grid>
-            <Grid item md={4}>
-              Job Openings
+          <Grid container sx={{ my: { xs: 2, md: 0 } }}>
+            <Grid item md={4} sx={{ p: { xs: 2, md: 3 } }}>
+              <Typography
+                component="h1"
+                variant="h6"
+                color="text.primary"
+                gutterBottom
+              >
+                Current Openings
+              </Typography>
               <nav className="searchResults" aria-label="search results">
                 <List>
                   {data.openings.map((o, idx) => {return (<div onClick={() => clickHandler(o)}>
-                                                                  <JobCard 
-                                                                    key = {idx}
-                                                                    title={o.title}
-                                                                    description={o.description}
-                                                                    company = {o.company.title}
-                                                                    src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`}
-                                                                    />
-                                                            </div>)  
-                                                  })}
+                    <JobCard key = {idx} title={o.title} description={o.description.length > 10 ? o.description.substring(0, 30) + "..." : o.description} company = {o.company.title} src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} /></div>)})}
                 </List>
               </nav>
             </Grid>
-            <Grid item xs>
+            <Grid item md={8}>
             </Grid>
           </Grid>
           </div>);
-// 
+//
 }

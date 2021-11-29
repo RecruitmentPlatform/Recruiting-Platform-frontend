@@ -19,6 +19,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -183,7 +184,7 @@ export default function PrimarySearchAppBar() {
             >
               <MenuIcon />
             </IconButton>
-            : 
+            :
           null}
             <Typography
               variant="h6"
@@ -241,24 +242,24 @@ export default function PrimarySearchAppBar() {
               style={{"marginLeft":"10px", "fontSize": "20px", "textTransform": "none"}}
               sx={{ display: { xs: 'none', sm: 'block' } }}
               onClick={logout}
-              component={Link} 
+              component={Link}
               to="/signup"
             >
               Logout
             </Button>
             :
             <div>
-                <Button color="inherit" 
-                        label="Signup" 
-                        component={Link} 
+                <Button color="inherit"
+                        label="Signup"
+                        component={Link}
                         to="/signup"
                         style={{fontSize:"1rem",fontFamily:"Helvetica Neue"}}
                 >
                   Sign up
                 </Button>
-                <Button color="inherit" 
-                        label="Login" 
-                        component={Link} 
+                <Button color="inherit"
+                        label="Login"
+                        component={Link}
                         to="/login"　
                         style={{fontSize:"1rem",fontFamily:"Helvetica Neue", marginRight:10}}
                 >
@@ -268,6 +269,18 @@ export default function PrimarySearchAppBar() {
             }
           </Toolbar>
         </AppBar>
+        <Breadcrumbs sx={{pl: { xs: 3 },pt: { xs: 2 } }} aria-label="breadcrumb">
+          <Link underline="hover" color="inherit" href="/">
+            Recruit
+          </Link>
+          <Link
+            underline="hover"
+            color="inherit"
+            href="/"
+          >
+            Page Title
+          </Link>
+        </Breadcrumbs>
       </Box>
   );
 }
