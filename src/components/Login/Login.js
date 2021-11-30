@@ -16,9 +16,20 @@ const Login = () => {
         setUserInput({...userInput, [key]:e.target.value});
     }
 
-    const submitHandler = async (e) => {
-        const response = await axios.post('http://127.0.0.1:5000/api/login', userInput);
-        const userData = await response.data
+    // const submitHandler = async (e) => {
+    //     const response = await axios.post('http://127.0.0.1:5000/api/login', userInput);
+    //     const userData = await response.data
+    //     if (userData.status === "success"){
+    //         sessionStorage.setItem("session_id", userData.session_id)
+    //         history.push("/search");
+    //     }else{
+    //         setHelperMessage("Invalid credentials")
+    //         history.push("/login");
+    //     }
+    // }
+
+    const submitHandler = () => {
+        const userData = {status:"success", "session_id":12345, "uid":1}
         if (userData.status === "success"){
             sessionStorage.setItem("session_id", userData.session_id)
             history.push("/search");
