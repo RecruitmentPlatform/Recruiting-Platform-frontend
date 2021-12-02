@@ -108,60 +108,14 @@ const Signup = () => {
           <InputBase
             sx={{ ml: 1, flex: 1 }}
             placeholder="Search for a job"
-            inputProps={{ "aria-label": "search google maps" }}
+            inputProps={{ "aria-label": "search for a job" }}
           />
           <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
             <SearchIcon />
           </IconButton>
         </Paper>
       </Container>
-      <Grid container>
-              <Grid item xs>
-              </Grid>
-              <Grid item md={4}>
-                <form className="form" onSubmit={submitHandler}>
-                    <h1 className="signup-title">Sign up</h1>
-                    <div className="type-container">
-                        <button className={signupType === "recruiter" ? "type-container-btn-toggle": "type-container-btn"}
-                                name="recruiter"
-                                onClick={changeType}>I'm a Recruiter</button>
-                        <button className={signupType === "candidate" ? "type-container-btn-toggle": "type-container-btn"}
-                                name="candidate"
-                                onClick={changeType}>I'm a Job Seeker</button>
-                    </div>
-
-                    <div className="form-container-input">
-                        <TextField
-                            name = "email"
-                            required
-                            id="outlined-required"
-                            label="Email"
-                            type="email"
-                            variant="outlined"
-                            style = {{width: "100%"}}
-                            onChange={inputHandler}
-                        />
-                    </div>
-                    <div className="form-container-input">
-                        <TextField
-                            name = "password"
-                            required
-                            id="outlined-required"
-                            label="Password"
-                            variant="outlined"
-                            type="password"
-                            style = {{width: "100%"}}
-                            onChange={inputHandler}
-                        />
-                    </div>
-                    <button className="signup-btn">Sign up</button>
-                    <p style={{margin:"5px 0 5px 0", color:"#F32013"}}>{helperMessage}</p>
-                    <p style={{margin:"0 0 30px 0"}}>Already have an account? <Link style={{textDecoration:"none"}} to="login">Login</Link></p>
-                </form>
-              </Grid>
-              <Grid item xs>
-              </Grid>
-            </Grid></>)
+      </>)
 }
 
 export default Signup;

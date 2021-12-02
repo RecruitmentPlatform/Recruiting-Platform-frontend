@@ -39,8 +39,8 @@ export default function Jobs() {
 
   const clickHandler = (o) => {
     history.push({
-      pathname: '/search/job',
-      search: `?query=id${o.id}`,
+      pathname: '/job',
+      search: `?q=${o.id}`,
       state: { id: o.id }
     })
   }

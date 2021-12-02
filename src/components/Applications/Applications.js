@@ -5,9 +5,10 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { gql, useQuery } from '@apollo/client';
 
+// Define GraphQL query for page data
 const GET_APPLICATIONS = gql`
-query  Applications{
-  applications{
+query GetApplications($candidateId: Int!){
+  applications (where:{candidateId:$candidateId}){
     id
     date
     status
@@ -19,6 +20,7 @@ query  Applications{
       title
     }}}}`;
 
+// Define columns list
 const columns = [
   { field: 'companyTitle', headerName: 'Company', width: 130 },
   { field: 'openingTitle', headerName: 'Opening', width: 200 },
@@ -35,27 +37,19 @@ const columns = [
   },
 ];
 
-// const rows = [
-//   { id: 1, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 2, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 3, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 4, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 5, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 6, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 7, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-//   { id: 8, companyTitle: 'Google', openingTitle: 'Software Engineering', applicationDate: '4/14/1995', applicationStatus: 1 },
-// ];
-
 export default function Applications() {
 
-  const { loading, error, data } = useQuery(GET_APPLICATIONS);
-  // const responseData = data["applications"]
-  const rows = []
-
+  // Execute the GraphQL query
+  const { loading, error, data } = useQuery(GET_APPLICATIONS, {
+    variables: { candidateId : 2 },
+  });
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
 
-  // console.log(data)
+  // Create empty list of row data
+  const rows = [];
+
+  // Populate row data
   for(let i=0; i<data["applications"].length; i++){
     let newRow = {}
     console.log(data["applications"])
@@ -65,12 +59,10 @@ export default function Applications() {
     newRow["companyTitle"] = data["applications"][i]["opening"]["company"]["title"];
     newRow["openingTitle"] = data["applications"][i]["opening"]["title"];
     newRow["applicationStatus"] = data["applications"][i]["opening"]["title"];
-    rows.push(newRow)
+    rows.push(newRow);
   }
 
-  // console.log(res)
-
-
+  // Return data and HTML
   return (
     <Container sx={{ p: { xs: 2, md: 3 } }}>
       <Typography

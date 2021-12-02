@@ -19,7 +19,7 @@ import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
 const GET_OPENING = gql`
-  query  Opening($id:Int!){
+  query Opening($id:Int!){
             opening(id:$id){
             title
             description
@@ -30,16 +30,14 @@ const GET_OPENING = gql`
           }
         }`;
 
-
 const CREATE_APPLCATION = gql`
 mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$status:Int!) {
       createApplication(date:$date, openingId: $openingId, candidateId: $candidateId, status: $status){
         id
       }
   }`;
-        
 
-const Job = () => {
+export default function Job() {
     const location = useLocation();
     const id = location.state.id;
     const history = useHistory()
@@ -68,7 +66,7 @@ const Job = () => {
       <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
-            Submit an Application
+            {data.opening.title}
           </Typography>
           <Typography>
             {data.opening.company.title}
@@ -99,13 +97,10 @@ const Job = () => {
                                                                             )
                                                                             .then(history.push("/applications"))
                                                                        }
-                                                                 }                                                      
+                                                                 }
               >Apply</Button>
             </DialogActions>
           </Dialog>
         </Paper>
-      </Container>)
+      </Container>);
 }
-
-export default Job;
-

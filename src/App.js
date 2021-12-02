@@ -23,6 +23,8 @@ import UpdateCandidate from "./components/CandidateRegistration/CandidateRegistr
 import Sidebar from "./components/Navbar/Sidebar";
 
 import Applications from "./components/Applications/Applications";
+import Interviews from "./components/Interviews/Interviews";
+import Profile from "./components/Profile/Profile";
 
 import {AuthContext} from "./AuthContext";
 function App() {
@@ -59,9 +61,11 @@ function App() {
           <Route path="/search/companies" exact component={Companies}/>
           <Route path="/search" exact component={Jobs}/>
           <Route path="/search/candidate" exact component={Candidate}/>
-          <Route path="/search/job" exact component={Job}/>
+          <Route path="/job" exact component={Job}/>
+          <Route path="/u" exact component={Profile}/>
           <Route path="/registration/candidate" exact component={UpdateCandidate}/>
           <Route path="/applications/" exact component={Applications}/>
+          <Route path="/interviews/" exact component={Interviews}/>
           </Switch>
         </AuthContext.Provider>
       </Router>
