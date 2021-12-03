@@ -1,4 +1,4 @@
-import {React, Fragment, useState, useEffect} from "react";
+import {React, Fragment, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
 import { gql, useQuery, useMutation } from '@apollo/client';
@@ -104,12 +104,16 @@ const GET_PROFILE = gql`
 
 export default function Profile() {
 
+  const [formData, setFormData] = useState({"title":"", "employmentType":"", "CompanyName":"","Location":"","Start":"","End":"", "Description":""})
+
+
   // Modal data
   const [open, setOpen] = useState(false);
   const handleClickOpen = (value) => {
     setOpen(true);
   };
   const handleClose = () => {
+    
     setOpen(false);
   };
 
@@ -117,6 +121,12 @@ export default function Profile() {
 
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
+
+  const handleInput = (e) => {
+    const key = e.target.name;
+    setFormData({...formData, [key]:e.target.value});
+    console.log(e.target.value)
+}
 
   return(
     <Container component="main">
@@ -147,20 +157,101 @@ export default function Profile() {
             <DialogTitle>Add Experience</DialogTitle>
             <DialogContent>
               <TextField
+                name="title"
                 autoFocus
                 margin="dense"
                 id="name"
-                label="Email Address"
-                type="email"
+                label="Title"
                 fullWidth
                 variant="standard"
+                defaultValue=""
+                onChange={handleInput}
+              />
+              <TextField
+                name="employment type"
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Employment Type"
+                fullWidth
+                variant="standard"
+                onChange={handleInput}
+              />
+              <TextField
+                name="compamy name"
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Company Name"
+                fullWidth
+                variant="standard"
+                onChange={handleInput}
+              />
+              <TextField
+                name="location"
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Locaton"
+                fullWidth
+                variant="standard"
+                onChange={handleInput}
+              />
+              <TextField
+                name="start"
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Start"
+                fullWidth
+                variant="standard"
+                onChange={handleInput}
+              />
+              <TextField
+                name="end"
+                autoFocus
+                margin="dense"
+                id="name"
+                label="End"
+                fullWidth
+                variant="standard"
+                defaultValue=""
+                onChange={handleInput}
+              />
+              <TextField
+                name="description"
+                id="standard-multiline-static"
+                label="Description"
+                multiline
+                rows={4}
+                fullWidth
+                variant="standard"
+                defaultValue=""
+                onChange={handleInput}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleClose}>Subscribe</Button>
+              <Button onClick={handleClose}>Submit</Button>
             </DialogActions>
           </Dialog>
+
+
+{/* id: Int!
+candidateId: Int!
+companyId: Int!
+start: Int
+end: Int
+positionId: Int!
+categoryId: Int!
+employmentId: Int
+location: String
+description: String
+candidate: Candidate
+company: Company
+position: Position
+category: Category
+employment: Employment */}
 
           <Card sx={{ mb: 2 }}>
             <CardHeader  sx={{ pb: 0 }}
