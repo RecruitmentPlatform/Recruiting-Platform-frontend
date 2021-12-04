@@ -4,9 +4,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import WorkIcon from '@mui/icons-material/Work';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Divider from '@mui/material/Divider';
 import {Card, CardContent, CardHeader, CardActionArea } from '@mui/material';
 
@@ -19,7 +21,7 @@ const JobCard =({title, description, company}) => {
               <Avatar alt="Google" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgXvZycVg8nFhEteByZ-aL16Jv-2bNch2GdfV&s=0" />
             }
             title={title}
-            subheader={company + " - " + "Palo Alto"}
+            subheader={company}
           />
           <CardContent>
             <Typography
@@ -28,9 +30,12 @@ const JobCard =({title, description, company}) => {
                       variant="body2"
                       color="text.secondary"
                       >
-              <WorkIcon fontSize="small" />Full Time
+              <Chip sx={{mr:.5}} size="small" icon={<WorkIcon />} label="Full Time" />
+              <Chip size="small" icon={<LocationOnIcon />} label="Palo Alto" />
               </Typography>
-              <p>{description}</p>
+              <Typography
+                variant="body2"
+                color="text.secondary">{description}</Typography>
           </CardContent>
         </CardActionArea>
       </Card>)

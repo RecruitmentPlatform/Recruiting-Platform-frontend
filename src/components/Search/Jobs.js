@@ -24,6 +24,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
+import Chip from '@mui/material/Chip';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -94,54 +95,60 @@ export default function Jobs() {
     console.log(openingData.opening);
   }
 
-  return (<Container>
-            <Box
-              component="form"
-              sx={{
-                '& > :not(style)': { m: 1 },
-              }}
-            >
-              <TextField
-                placeholder="Job title or keywords"
-                variant="outlined"
-                size="small"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon/>
-                    </InputAdornment>
-                  ),
+  return (<div><Paper square sx={{mb:1}}>
+            <Container>
+              <Box
+                component="form"
+                sx={{
+                  '& > :not(style)': { m: 1 },
                 }}
-              />
-              <TextField
-                placeholder="Location"
-                variant="outlined"
-                size="small"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LocationOnIcon/>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button variant="contained" type="submit">Search</Button>
-            </Box>
+              >
+                <TextField
+                  placeholder="Job title or keywords"
+                  variant="outlined"
+                  size="small"
+                  name="q"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon/>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  placeholder="Location"
+                  variant="outlined"
+                  size="small"
+                  name="l"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LocationOnIcon/>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Button variant="contained" type="submit">Search</Button>
+              </Box>
+            </Container>
+          </Paper>
+          <Container>
             <Typography
                       sx={{ display: "flex", mb:1, px:1 }}
                       component="p"
                       variant="body2"
                       color="text.secondary"
                       >
-                      2 openings found
+                      2 jobs found <Chip size="small" sx={{ ml:1 }} label="Post a free job" component="a" href="/post" variant="outlined" color="primary" clickable />
             </Typography>
             <Grid container sx={{ my: { xs: 2, md: 0 } }}>
-              <Grid item md={4} sx={{  px:1 }}>
+              <Grid item md={4} sx={{  px:1}}>
                     {openingsData.openings.map((o, idx) => {return (<div onClick={() => getSingleOpening({ variables: { id: o.id } })}>
                       <JobCard
                         key = {idx}
                         title = {o.title}
-                        description={o.description.length > 10 ? o.description.substring(0, 100) + "..." : o.description}
+                        description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
                         company = {o.company.title}
                         src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
                       </div>)})}
@@ -166,7 +173,7 @@ export default function Jobs() {
                     </Button>}
                   />
                   <Divider sx={{my:2}} />
-                  <CardContent>
+                  <CardContent sx={{pt:0}}>
                     <Typography>
                       {openingData?openingData.opening.location:''}
                     </Typography>
@@ -178,7 +185,7 @@ export default function Jobs() {
                     <DialogTitle>Apply </DialogTitle>
                     <DialogContent>
                       <DialogContentText>
-                        <Alert severity="info">Before submitting a job application — <Link href="#">complete your profile</Link>!</Alert>
+                        <Alert severity="info">Before submitting a job application — <Link href="/u">complete your profile</Link>!</Alert>
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -200,5 +207,5 @@ export default function Jobs() {
                 </Card>
               </Grid>
             </Grid>
-          </Container>);
+          </Container></div>);
 }

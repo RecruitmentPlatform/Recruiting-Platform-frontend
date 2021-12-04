@@ -29,7 +29,7 @@ const GET_OPENING = gql`
           }
         }`;
 
-const CREATE_APPLCATION = gql`
+const CREATE_APPLICATION = gql`
 mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$status:Int!) {
       createApplication(date:$date, openingId: $openingId, candidateId: $candidateId, status: $status){
         id
@@ -38,10 +38,12 @@ mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$statu
 
 export default function Job() {
     const location = useLocation();
-    const id = location.state.id;
+    //const id = location.state.id;
+    const id = this.props.match.params.id;
+    console.log(this.props.match.params.id);
     const history = useHistory()
     const { loading, error, data } = useQuery(GET_OPENING, {variables:{id}});
-    const [createApplication, { data2, loading2, error2 }] = useMutation(CREATE_APPLCATION);
+    const [createApplication, { data2, loading2, error2 }] = useMutation(CREATE_APPLICATION);
     const [isNull, setIsNull] = useState(false);
     const uid = +sessionStorage.getItem("uid");
 
@@ -86,17 +88,18 @@ export default function Job() {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button variant="contained" type="button" onClick={() => {createApplication(
-                                                                            {variables: {
-                                                                                  date:12345,
-                                                                                  openingId:id,
-                                                                                  candidateId: uid,
-                                                                                  status:1}
-                                                                                }
-                                                                            )
-                                                                            .then(history.push("/applications"))
-                                                                       }
-                                                                 }
+              <Button variant="contained" type="button"
+              onClick={() => {
+                createApplication({
+                    variables: {
+                      date: 12345,
+                      openingId: id,
+                      candidateId: uid,
+                      status: 1
+                    }
+                  })
+                  .then(history.push("/applications"))
+              }}
               >Apply</Button>
             </DialogActions>
           </Dialog>

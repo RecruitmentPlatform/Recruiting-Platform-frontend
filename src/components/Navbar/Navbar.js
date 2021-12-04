@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
-const pages = ['Search', 'Applications','Interviews'];
+const pages = ['Jobs', 'Companies', 'Applications','Interviews'];
 const settings = ['Profile', 'Logout'];
 
 const ResponsiveAppBar = () => {
@@ -35,8 +35,8 @@ const ResponsiveAppBar = () => {
   };
 
   return (
-    <AppBar position="static" sx = {{mb:2}}>
-      <Container maxWidth="xl">
+    <AppBar position="static">
+      <Container>
         <Toolbar disableGutters>
           <Typography
             variant="h6"

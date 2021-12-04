@@ -137,19 +137,20 @@ export default function Profile() {
               alt="image alt"
             />
             <CardHeader
-            avatar={
-              <Avatar {...stringAvatar(data.candidate.first+" "+data.candidate.last)} />
-            }
-            title={data.candidate.first+" "+data.candidate.last}
-            subheader="Engineer at Facebook"
-          />
-          <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              {data.candidate.description}
-            </Typography>
-          </CardContent>
+              avatar={
+                <Avatar {...stringAvatar(data.candidate.first+" "+data.candidate.last)} />
+              }
+              title={data.candidate.first+" "+data.candidate.last}
+              subheader="Engineer at Facebook"
+              action={<Button variant="contained">Edit Profile</Button>
+              }
+            />
+            <CardContent>
+              <Typography variant="body2" color="text.secondary">
+                {data.candidate.description}
+              </Typography>
+            </CardContent>
           </Card>
-
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Add Experience</DialogTitle>
             <DialogContent>
