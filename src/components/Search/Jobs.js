@@ -8,10 +8,17 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from "@mui/material/ListItemText";
-// import Divider from "@mui/material/Divider";
+import Divider from "@mui/material/Divider";
 
 import Typography from "@mui/material/Typography";
 import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+
+import Input from "@mui/material/Input";
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from "@mui/icons-material/Search";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -25,7 +32,9 @@ import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 
 import JobCard from "../Card/JobCard";
-import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+
+import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 const GET_OPENINGS = gql`
   query Openings{
@@ -52,6 +61,13 @@ const GET_SINGLE_OPENING = gql`
     }
   }`;
 
+const CREATE_APPLICATION = gql`
+mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$status:Int!) {
+      createApplication(date:$date, openingId: $openingId, candidateId: $candidateId, status: $status){
+        id
+      }
+  }`;
+
 export default function Jobs() {
 
   const { loading:openingsLoading, data:openingsData } = useQuery(GET_OPENINGS);
@@ -59,6 +75,8 @@ export default function Jobs() {
     getSingleOpening,
     { data:openingData, loading:openingLoading }
   ] = useLazyQuery(GET_SINGLE_OPENING);
+
+  const [createApplication, { data:applicationData, loading:applicationLoading }] = useMutation(CREATE_APPLICATION);
 
   const history = useHistory()
   // Modal data
@@ -76,39 +94,86 @@ export default function Jobs() {
     console.log(openingData.opening);
   }
 
-  return (<div>
+  return (<Container>
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)': { m: 1 },
+              }}
+            >
+              <TextField
+                placeholder="Job title or keywords"
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon/>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                placeholder="Location"
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocationOnIcon/>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button variant="contained" type="submit">Search</Button>
+            </Box>
+            <Typography
+                      sx={{ display: "flex", mb:1, px:1 }}
+                      component="p"
+                      variant="body2"
+                      color="text.secondary"
+                      >
+                      2 openings found
+            </Typography>
             <Grid container sx={{ my: { xs: 2, md: 0 } }}>
-              <Grid item md={4} sx={{ p: { xs: 2, md: 3 } }}>
-                <Typography
-                  component="h1"
-                  variant="h6"
-                  color="text.primary"
-                  gutterBottom
-                >
-                  Current Openings
-                </Typography>
-                <nav className="searchResults" aria-label="search results">
-                  <List>
+              <Grid item md={4} sx={{  px:1 }}>
                     {openingsData.openings.map((o, idx) => {return (<div onClick={() => getSingleOpening({ variables: { id: o.id } })}>
-                      <JobCard key = {idx} title={o.title} description={o.description.length > 10 ? o.description.substring(0, 30) + "..." : o.description} company = {o.company.title} src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} /></div>)})}
-                  </List>
-                </nav>
+                      <JobCard
+                        key = {idx}
+                        title = {o.title}
+                        description={o.description.length > 10 ? o.description.substring(0, 100) + "..." : o.description}
+                        company = {o.company.title}
+                        src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
+                      </div>)})}
               </Grid>
               <Grid item md={8}>
-                <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-                  <Typography component="h1" variant="h4" align="center">
-                    {openingData?openingData.opening.title:''}
-                  </Typography>
-                  <Typography>
-                    {openingData?openingData.opening.company.title:''}
-                    {openingData?openingData.opening.location:''}
-                  </Typography>
-                  <Button variant="outlined" onClick={handleClickOpen}>
-                    Apply Now
-                  </Button>
-                  <div>
-                    {openingData?openingData.opening.description:''}
-                  </div>
+                <Card sx={{mb:2}}>
+                  <CardContent sx={{pb:0}}>
+                    <Typography component="h1" variant="h6">
+                      {openingData?openingData.opening.title:''}
+                    </Typography>
+                  </CardContent>
+                  <Divider sx={{my:2}} />
+                  <CardHeader
+                    sx={{py:0}}
+                    avatar={
+                      <Avatar alt="Google" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgXvZycVg8nFhEteByZ-aL16Jv-2bNch2GdfV&s=0" />
+                    }
+                    title={openingData?openingData.opening.company.title:''}
+                    subheader={"Palo Alto"}
+                    action={<Button variant="contained" onClick={handleClickOpen}>
+                      Apply Now
+                    </Button>}
+                  />
+                  <Divider sx={{my:2}} />
+                  <CardContent>
+                    <Typography>
+                      {openingData?openingData.opening.location:''}
+                    </Typography>
+                    <div>
+                      {openingData?openingData.opening.description:''}
+                    </div>
+                  </CardContent>
                   <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>Apply </DialogTitle>
                     <DialogContent>
@@ -118,11 +183,22 @@ export default function Jobs() {
                     </DialogContent>
                     <DialogActions>
                       <Button onClick={handleClose}>Cancel</Button>
-                      <Button variant="contained" type="button">Apply</Button>
+                      <Button variant="contained" type="button"
+                      onClick={() => {
+                        createApplication({
+                            variables: {
+                              date: 666,
+                              openingId: 1,
+                              candidateId: 2,
+                              status: 1
+                            }
+                          })
+                          .then(history.push("/applications"))
+                      }}>Apply</Button>
                     </DialogActions>
                   </Dialog>
-                </Paper>
+                </Card>
               </Grid>
             </Grid>
-          </div>);
+          </Container>);
 }

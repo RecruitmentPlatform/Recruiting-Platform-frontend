@@ -1,4 +1,4 @@
-import {React, Fragment, useState} from "react";
+import {React, Fragment, useState, useEffect} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
 import { gql, useQuery, useMutation } from '@apollo/client';
@@ -15,7 +15,7 @@ import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -102,12 +102,11 @@ const GET_PROFILE = gql`
   });
 }*/
 
-export default function Profile() {
-  const [formData, setFormData] = useState({"title":"", "employmentType":"", "CompanyName":"","Location":"","Start":"","End":"", "Description":""})
+export default function Settings() {
 
   // Modal data
   const [open, setOpen] = useState(false);
-  const handleExperienceOpen = (value) => {
+  const handleClickOpen = (value) => {
     setOpen(true);
   };
   const handleClose = () => {
@@ -118,12 +117,6 @@ export default function Profile() {
 
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
-
-  const handleInput = (e) => {
-    const key = e.target.name;
-    setFormData({...formData, [key]:e.target.value});
-    console.log(e.target.value)
-  }
 
   return(
     <Container component="main">
@@ -154,91 +147,25 @@ export default function Profile() {
             <DialogTitle>Add Experience</DialogTitle>
             <DialogContent>
               <TextField
-                name="title"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Title"
-                fullWidth
-                variant="standard"
-                defaultValue=""
-                onChange={handleInput}
-              />
-              <TextField
-                name="employment type"
                 autoFocus
                 margin="dense"
                 id="name"
                 label="Email Address"
                 type="email"
-                label="Employment Type"
                 fullWidth
                 variant="standard"
-                onChange={handleInput}
-              />
-              <TextField
-                name="compamy name"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Company Name"
-                fullWidth
-                variant="standard"
-                onChange={handleInput}
-              />
-              <TextField
-                name="location"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Locaton"
-                fullWidth
-                variant="standard"
-                onChange={handleInput}
-              />
-              <TextField
-                name="start"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Start"
-                fullWidth
-                variant="standard"
-                onChange={handleInput}
-              />
-              <TextField
-                name="end"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="End"
-                fullWidth
-                variant="standard"
-                defaultValue=""
-                onChange={handleInput}
-              />
-              <TextField
-                name="description"
-                id="standard-multiline-static"
-                label="Description"
-                multiline
-                rows={4}
-                fullWidth
-                variant="standard"
-                defaultValue=""
-                onChange={handleInput}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleClose}>Submit</Button>
+              <Button onClick={handleClose}>Subscribe</Button>
             </DialogActions>
           </Dialog>
 
           <Card sx={{ mb: 2 }}>
             <CardHeader  sx={{ pb: 0 }}
               action={
-                <IconButton aria-label="edit" onClick = {() => handleExperienceOpen()}>
+                <IconButton aria-label="edit" onClick = {() => handleClickOpen()}>
                   <AddIcon />
                 </IconButton>
               }
@@ -263,52 +190,6 @@ export default function Profile() {
                 subheader="Google Inc."
               />
             </CardActionArea>
-          </Card>
-          <Card>
-            <CardHeader  sx={{ pb: 0 }}
-              action={
-                <IconButton aria-label="edit" onClick = {() => handleExperienceOpen()}>
-                  <AddIcon />
-                </IconButton>
-              }
-              title="Skills"
-            />
-            <CardContent>
-              <List
-                sx={{ width: "100%"}}
-              >
-                <ListItem
-                      secondaryAction={
-                        <IconButton edge="end" aria-label="delete">
-                          <DeleteIcon />
-                        </IconButton>
-                      }
-                      disablePadding
-                    >
-                  <ListItemText primary="React" />
-                </ListItem>
-                <ListItem
-                      secondaryAction={
-                        <IconButton edge="end" aria-label="delete">
-                          <DeleteIcon />
-                        </IconButton>
-                      }
-                      disablePadding
-                    >
-                  <ListItemText primary="Javascript" />
-                </ListItem>
-                <ListItem
-                      secondaryAction={
-                        <IconButton edge="end" aria-label="delete">
-                          <DeleteIcon />
-                        </IconButton>
-                      }
-                      disablePadding
-                    >
-                  <ListItemText primary="Python" />
-                </ListItem>
-              </List>
-            </CardContent>
           </Card>
         </Grid>
         <Grid item sm={12} md={4} sx={{ p: { xs: 2, md: 3 } }}>

@@ -11,6 +11,7 @@ import {
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import Navbar from "./components/Navbar/Navbar";
+import Settings from "./components/Settings/Settings";
 
 import Jobs from "./components/Search/Jobs";
 import Candidates from "./components/Search/Candidates";
@@ -55,17 +56,17 @@ function App() {
           <Route path="/" exact component={Signup}/>
           <Route path="/signup" exact component={Signup}/>
           <Route path="/login" exact component={Login}/>
-          <Route path="/search/jobs" exact component={Jobs}/>
+          <Route path="/applications/" exact component={Applications}/>
+          <Route path="/interviews/" exact component={Interviews}/>
+          <Route path="/search" exact component={Jobs}/>
+          <Route path="/u" exact component={Profile}/>
+          <Route path="/settings" exact component={Settings}/>
+
           <Route path="/search/candidates" exact component={Candidates}/>
           <Route path="/search/recruiters" exact component={Recruiters}/>
           <Route path="/search/companies" exact component={Companies}/>
-          <Route path="/search" exact component={Jobs}/>
           <Route path="/search/candidate" exact component={Candidate}/>
-          <Route path="/job" exact component={Job}/>
-          <Route path="/u" exact component={Profile}/>
           <Route path="/registration/candidate" exact component={UpdateCandidate}/>
-          <Route path="/applications/" exact component={Applications}/>
-          <Route path="/interviews/" exact component={Interviews}/>
           </Switch>
         </AuthContext.Provider>
       </Router>

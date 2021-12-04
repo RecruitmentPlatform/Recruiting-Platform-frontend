@@ -50,14 +50,6 @@ const Login = () => {
         <Grid item md={4}>
           <form className="form" onSubmit={submitHandler}>
               <h1 className="login-title">Login</h1>
-              <div className="type-container">
-                        <button className={signupType === "recruiter" ? "type-container-btn-toggle": "type-container-btn"}
-                                name="recruiter"
-                                onClick={changeType}>I'm a Recruiter</button>
-                        <button className={signupType === "candidate" ? "type-container-btn-toggle": "type-container-btn"}
-                                name="candidate"
-                                onClick={changeType}>I'm a Job Seeker</button>
-              </div>
               <div className="form-container-input">
                   <TextField
                       name = "email"

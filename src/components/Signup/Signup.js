@@ -103,7 +103,7 @@ const Signup = () => {
         bgcolor: 'info.main', pt: 8, pb: 6, }}>
         <Paper
           component="form"
-          sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400, margin: "0 auto" }}
+          sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400, margin: "0 auto 10px 0" }}
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
