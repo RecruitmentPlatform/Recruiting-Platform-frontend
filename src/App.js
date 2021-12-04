@@ -6,7 +6,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-
+import { useParams } from 'react-router-dom';
 //import components from /components
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
@@ -21,6 +21,7 @@ import Companies from "./components/Search/Companies";
 import Candidate from "./components/Candidate/Candidate";
 import Job from "./components/Job/Job";
 import UpdateCandidate from "./components/CandidateRegistration/CandidateRegistration";
+import Company from "./components/Company/Company";
 import Sidebar from "./components/Navbar/Sidebar";
 
 import Applications from "./components/Applications/Applications";
@@ -59,6 +60,8 @@ function App() {
           <Route path="/applications/" exact component={Applications}/>
           <Route path="/interviews/" exact component={Interviews}/>
           <Route path="/search" exact component={Jobs}/>
+          <Route path="/job/:id" exact component={Job}/>
+          <Route path="/company" exact component={Company}/>
           <Route path="/u" exact component={Profile}/>
           <Route path="/settings" exact component={Settings}/>
 
