@@ -13,6 +13,7 @@ import Signup from "./components/Signup/Signup";
 import Navbar from "./components/Navbar/Navbar";
 import Settings from "./components/Settings/Settings";
 
+import Search from "./components/Search/Search";
 import Jobs from "./components/Search/Jobs";
 import Candidates from "./components/Search/Candidates";
 import Recruiters from "./components/Search/Recruiters";
@@ -37,8 +38,8 @@ function App() {
     return (
     <div className="App">
       <Router>
-      <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
-      <Navbar/>
+        <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
+        <Navbar/>
         <Switch>
 
           {/* <Route path="/search/recruiter" exact component={Recruiter}/> */}
@@ -51,29 +52,30 @@ function App() {
     return (
       <div className="App">
         <Router>
-        <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
-        <Navbar/>
+          <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
+          <Navbar/>
+          <div style={{paddingLeft:'56px'}}>
           <Switch>
-          <Route path="/" exact component={Signup}/>
-          <Route path="/signup" exact component={Signup}/>
-          <Route path="/login" exact component={Login}/>
-          <Route path="/applications/" exact component={Applications}/>
-          <Route path="/interviews/" exact component={Interviews}/>
-          <Route path="/search" exact component={Jobs}/>
-          <Route path="/job/:id" exact component={Job}/>
-          <Route path="/company" exact component={Company}/>
-          <Route path="/u" exact component={Profile}/>
-          <Route path="/settings" exact component={Settings}/>
+            <Route path="/" exact component={Signup}/>
+            <Route path="/signup" exact component={Signup}/>
+            <Route path="/login" exact component={Login}/>
+            <Route path="/search" exact component={Search}/>
+            <Route path="/applications/" exact component={Applications}/>
+            <Route path="/interviews/" exact component={Interviews}/>
+            <Route path="/jobs" exact component={Jobs}/>
+            <Route path="/job/:id" exact component={Job}/>
+            <Route path="/company" exact component={Company}/>
+            <Route path="/u" exact component={Profile}/>
+            <Route path="/settings" exact component={Settings}/>
 
-          <Route path="/search/candidates" exact component={Candidates}/>
-          <Route path="/search/recruiters" exact component={Recruiters}/>
-          <Route path="/search/companies" exact component={Companies}/>
-          <Route path="/search/candidate" exact component={Candidate}/>
-          <Route path="/registration/candidate" exact component={UpdateCandidate}/>
+            <Route path="/search/candidates" exact component={Candidates}/>
+            <Route path="/companies" exact component={Companies}/>
+            <Route path="/registration/candidate" exact component={UpdateCandidate}/>
           </Switch>
-        </AuthContext.Provider>
-      </Router>
-    </div>
+          </div>
+          </AuthContext.Provider>
+        </Router>
+      </div>
     )
   }
 }

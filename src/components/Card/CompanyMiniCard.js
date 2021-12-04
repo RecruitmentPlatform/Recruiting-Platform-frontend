@@ -12,34 +12,19 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Divider from '@mui/material/Divider';
 import {Card, CardContent, CardHeader, CardActionArea } from '@mui/material';
 
-const JobCard =({title, description, company, src}) => {
+const CompanyMiniCard =({title,src}) => {
     return (<Card sx={{mb:2}}>
         <CardActionArea>
           <CardHeader
-            sx={{pb:0}}
             avatar={
-              <Avatar alt={company} src={"//logo.clearbit.com/"+company.toLowerCase()+".com"} />
+              <Avatar alt={title} src={"//logo.clearbit.com/"+title.toLowerCase()+".com"} />
             }
             title={title}
-            subheader={company}
+            subheader="Palo Alto"
           />
-          <CardContent>
-            <Typography
-                      sx={{ display: "flex", mb:1 }}
-                      component="span"
-                      variant="body2"
-                      color="text.secondary"
-                      >
-              <Chip sx={{mr:.5}} size="small" icon={<WorkIcon />} label="Full Time" />
-              <Chip size="small" icon={<LocationOnIcon />} label="Palo Alto" />
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary">{description}</Typography>
-          </CardContent>
         </CardActionArea>
       </Card>)
 
 }
 
-export default JobCard;
+export default CompanyMiniCard;

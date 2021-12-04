@@ -76,7 +76,7 @@ const Signup = () => {
         }
     }
 
-    return (<>
+    return (
       <Box
         sx={{
           bgcolor: 'background.primary',
@@ -92,30 +92,13 @@ const Signup = () => {
             color="text.primary"
             gutterBottom
           >
-            Find a Job
+            Begin Searching
           </Typography>
           <Typography variant="h5" align="center" color="text.secondary" paragraph>
-            A description of our recruitment platform that highlights the initial benefits of the app - such as finding a job!
+            Search for a job or a company.
           </Typography>
         </Container>
-      </Box>
-      <Container maxWidth="100%" sx={{
-        bgcolor: 'info.main', pt: 8, pb: 6, }}>
-        <Paper
-          component="form"
-          sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400, margin: "0 auto 10px 0" }}
-        >
-          <InputBase
-            sx={{ ml: 1, flex: 1 }}
-            placeholder="Search for a job"
-            inputProps={{ "aria-label": "search for a job" }}
-          />
-          <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-            <SearchIcon />
-          </IconButton>
-        </Paper>
-      </Container>
-      </>)
+      </Box>)
 }
 
 export default Signup;

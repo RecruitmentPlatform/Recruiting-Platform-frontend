@@ -140,7 +140,7 @@ export default function Jobs() {
                       variant="body2"
                       color="text.secondary"
                       >
-                      2 jobs found <Chip size="small" sx={{ ml:1 }} label="Post a free job" component="a" href="/post" variant="outlined" color="primary" clickable />
+                      3 jobs found <Chip size="small" sx={{ ml:1 }} label="Post a free job" component="a" href="/post" variant="outlined" color="primary" clickable />
             </Typography>
             <Grid container sx={{ my: { xs: 2, md: 0 } }}>
               <Grid item md={4} sx={{  px:1}}>
@@ -154,19 +154,20 @@ export default function Jobs() {
                       </div>)})}
               </Grid>
               <Grid item md={8}>
+              {openingData?
                 <Card sx={{mb:2}}>
                   <CardContent sx={{pb:0}}>
-                    <Typography component="h1" variant="h6">
-                      {openingData?openingData.opening.title:''}
+                    <Typography sx={{fontWeight: 'bold'}} component="h1" variant="h6">
+                      {openingData.opening.title}
                     </Typography>
                   </CardContent>
                   <Divider sx={{my:2}} />
                   <CardHeader
                     sx={{py:0}}
                     avatar={
-                      <Avatar alt="Google" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgXvZycVg8nFhEteByZ-aL16Jv-2bNch2GdfV&s=0" />
+                      <Avatar alt={openingData.opening.company.title} src={"//logo.clearbit.com/"+openingData.opening.company.title.toLowerCase()+".com"} />
                     }
-                    title={openingData?openingData.opening.company.title:''}
+                    title={openingData.opening.company.title}
                     subheader={"Palo Alto"}
                     action={<Button variant="contained" onClick={handleClickOpen}>
                       Apply Now
@@ -175,10 +176,10 @@ export default function Jobs() {
                   <Divider sx={{my:2}} />
                   <CardContent sx={{pt:0}}>
                     <Typography>
-                      {openingData?openingData.opening.location:''}
+                      {openingData.opening.location}
                     </Typography>
                     <div>
-                      {openingData?openingData.opening.description:''}
+                      {openingData.opening.description}
                     </div>
                   </CardContent>
                   <Dialog open={open} onClose={handleClose}>
@@ -204,7 +205,7 @@ export default function Jobs() {
                       }}>Apply</Button>
                     </DialogActions>
                   </Dialog>
-                </Card>
+                </Card>: null }
               </Grid>
             </Grid>
           </Container></div>);
