@@ -53,6 +53,7 @@ const GET_OPENINGS = gql`
 const GET_SINGLE_OPENING = gql`
   query Opening($id:Int!){
     opening(id:$id){
+      id
       title
       description
       companyId
@@ -196,7 +197,7 @@ export default function Jobs() {
                         createApplication({
                             variables: {
                               date: 666,
-                              openingId: 1,
+                              openingId: openingData.opening.id,
                               candidateId: 2,
                               status: 1
                             }

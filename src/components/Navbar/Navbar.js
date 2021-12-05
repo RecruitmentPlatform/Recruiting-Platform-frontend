@@ -24,7 +24,7 @@ import InputBase from "@mui/material/InputBase";
 
 const drawerWidth = 240;
 
-const Search = styled("div")(({ theme }) => ({
+const Search = styled("form")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
@@ -155,13 +155,14 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Search>
+          <Search action="/search"
+          method="GET">
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
+              placeholder="Search..."
+              inputProps={{ "aria-label": "search","name":"q" }}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
@@ -179,8 +180,8 @@ export default function Navbar() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Jobs', 'Companies', 'Recruiters'].map((text, index) => (
-            <ListItem button key={text}>
+          {['Jobs', 'Companies'].map((text, index) => (
+            <ListItem button component="a" href={"/"+text.toLowerCase()} key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>
@@ -190,8 +191,8 @@ export default function Navbar() {
         </List>
         <Divider />
         <List>
-          {['Applications', 'Interviews', 'Messages'].map((text, index) => (
-            <ListItem button key={text}>
+          {['Applications', 'Interviews'].map((text, index) => (
+            <ListItem button component="a" href={"/"+text.toLowerCase()} key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>

@@ -1,5 +1,5 @@
 import {React, Fragment, useState, useEffect} from "react";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import axios from "axios"
 // import Box from "@mui/material/Box";
 import List from "@mui/material/List";
@@ -40,8 +40,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 const GET_OPENINGS = gql`
-  query Openings{
-    openings{
+  query Openings($query:String){
+    openings(where:{title:$query}){
       id
       title
       description
@@ -53,8 +53,8 @@ const GET_OPENINGS = gql`
   }`;
 
 const GET_COMPANIES = gql`
-  query Companies{
-    companies{
+  query Companies($query:String){
+    companies(where:{title:$query}){
       id
       title
       description
@@ -63,9 +63,13 @@ const GET_COMPANIES = gql`
 
 export default function Search() {
 
-  const { loading:openingsLoading, data:openingsData } = useQuery(GET_OPENINGS);
+  let search = window.location.search;
+  let params = new URLSearchParams(search);
+  let query = params.get('q');
 
-  const { loading:companiesLoading, data:companiesData } = useQuery(GET_COMPANIES);
+  const { loading:openingsLoading, data:openingsData } = useQuery(GET_OPENINGS, {variables:{query}});
+
+  const { loading:companiesLoading, data:companiesData } = useQuery(GET_COMPANIES, {variables:{query}});
 
   const history = useHistory()
 
@@ -80,7 +84,7 @@ export default function Search() {
                   component="h1"
                   variant="h6"
                   >
-                  Results for "search"
+                  Results for "{query}"
                 </Typography>
                 <Typography
                   sx={{ display: "flex", mb:1, px:1 }}
