@@ -1,5 +1,5 @@
 import {React, Fragment, useState} from "react";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory, useLocation, useParams} from "react-router-dom";
 import axios from "axios";
 import { gql, useQuery, useMutation } from '@apollo/client';
 
@@ -32,8 +32,8 @@ import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} fr
 import JobCard from "../Card/JobCard";
 
 const GET_COMPANY_OPENINGS = gql`
-  query Openings($companyId:Int!){
-          openings(where:{companyId:$companyId}){
+  query Openings($id:Int!){
+          openings(where:{companyId:$id}){
             id
             title
             description
@@ -56,9 +56,11 @@ const GET_COMPANY = gql`
 }*/
 
 export default function Company() {
-  const { loading, error, data } = useQuery(GET_COMPANY, {variables:{id:1}});
+  var { id } = useParams();
+  id = parseInt(id);
+  const { loading, error, data } = useQuery(GET_COMPANY, {variables:{id}});
 
-  const { data:openingsData, loading:openingsLoading } = useQuery(GET_COMPANY_OPENINGS, {variables:{companyId:1}});
+  const { data:openingsData, loading:openingsLoading } = useQuery(GET_COMPANY_OPENINGS, {variables:{id}});
 
   if (openingsLoading) return 'Loading...';
 

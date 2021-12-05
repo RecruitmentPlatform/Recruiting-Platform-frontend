@@ -64,7 +64,7 @@ function App() {
             <Route path="/interviews/" exact component={Interviews}/>
             <Route path="/jobs" exact component={Jobs}/>
             <Route path="/job/:id" exact component={Job}/>
-            <Route path="/company" exact component={Company}/>
+            <Route path="/company/:id" exact component={Company}/>
             <Route path="/u" exact component={Profile}/>
             <Route path="/settings" exact component={Settings}/>
 

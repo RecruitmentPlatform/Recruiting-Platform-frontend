@@ -1,5 +1,5 @@
 import {React, useState, useEffect} from "react";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory, useLocation, useParams} from "react-router-dom";
 import axios from "axios";
 import { gql, useQuery, useMutation } from '@apollo/client';
 
@@ -37,10 +37,10 @@ mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$statu
   }`;
 
 export default function Job() {
-    const location = useLocation();
+    //const location = useLocation();
     //const id = location.state.id;
-    const id = this.props.match.params.id;
-    console.log(this.props.match.params.id);
+    var { id } = useParams();
+    id = parseInt(id);
     const history = useHistory()
     const { loading, error, data } = useQuery(GET_OPENING, {variables:{id}});
     const [createApplication, { data2, loading2, error2 }] = useMutation(CREATE_APPLICATION);
