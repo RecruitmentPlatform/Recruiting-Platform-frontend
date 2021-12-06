@@ -48,12 +48,6 @@ const GET_COMPANY = gql`
           }
         }`;
 
-/*function openFunc(value) {
-  this.setState({
-     open_dialog: true,
-     myid: value
-  });
-}*/
 
 export default function Company() {
   var { id } = useParams();
