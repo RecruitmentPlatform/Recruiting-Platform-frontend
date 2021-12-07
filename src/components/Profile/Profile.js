@@ -1,7 +1,7 @@
 import {React, Fragment, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -67,25 +67,36 @@ const GET_PROFILE = gql`
             first
             last
             description
-            experiences {
+          }
+        }`;
+const GET_EXPERIENCES = gql`
+  query GetExperiences($id:Int!){
+        candidate(id:$id) {
+          experiences {
+            id
+            start
+            end
+            description
+            location
+            employment {
               id
-              start
-              end
-              description
-              location
-              employment {
-                id
-                title
-              }
-              company {
-                id
-                title
-              }
-              position {
-                id
-                title
-              }
+              title
             }
+            company {
+              id
+              title
+            }
+            position {
+              id
+              title
+            }
+          }
+        }
+      }`;
+
+const GET_EDUCATIONS = gql`
+  query GetEducations($id:Int!){
+        candidate(id:$id) {
             educations {
               id
               start
@@ -108,11 +119,10 @@ const ADD_EXPERIENCE = gql`
                          }}`;
 
 const EDIT_EXPERIENCE = gql`
-    mutation EditExperience($id:Int, $location:String,$companyId:Int, $companyId:Int, $categoryId:Int, $description:String, $employmentId:Int) {
-          editExperience(id:$id, location:$location, companyId: $companyId, companyId: $companyId, categoryId: $categoryId, description:$description, employmentId:$employmentId) {
+    mutation UpdateExperience($id:Int, $location:String, $companyId:Int, $categoryId:Int, $description:String, $employmentId:Int) {
+        updateExperience(id:$id, location:$location, companyId: $companyId, categoryId: $categoryId, description:$description, employmentId:$employmentId) {
               id
             }}`;
-
 /*function openFunc(value) {
   this.setState({
      open_dialog: true,
@@ -123,8 +133,8 @@ const EDIT_EXPERIENCE = gql`
 export default function Profile() {
 
   const [formExperienceAdd, setFormExperienceAdd] = useState({"Title":"", "EmploymentType":"", "CompanyName":"","Location":"","Start":"","End":"", "Description":""})
-  const [formExperienceEdit, setFormExperienceEdit] = useState({"Title":"", "EmploymentType":"", "CompanyName":"","Location":"","Start":"","End":"", "Description":""})
-  const [editExprienceIdx, setEditExprienceIdx] = useState(0)
+  const [formExperienceData, setFormExperienceData] = useState({"Title":"", "EmploymentType":"", "CompanyName":"","Location":"","Start":"","End":"", "Description":""})
+  const [editExprienceIdx, setEditExprienceIdx] = useState()
 
   // Modal data
   const [openAdd, setOpenAdd] = useState(false);
@@ -137,45 +147,55 @@ export default function Profile() {
     setOpenAdd(false);
   };
 
-  const handleClickOpenEdit = (idx) => {
-    setFormExperienceEdit({...formExperienceEdit, "Title":data.candidate.experiences[editExprienceIdx].position.title,
-                                                  "EmploymentType":"", CompanyName:data.candidate.experiences[editExprienceIdx].company.title,
-                                                  "Location":data.candidate.experiences[editExprienceIdx].location, 
-                                                  "Start":data.candidate.experiences[editExprienceIdx].start,
-                                                  "End":data.candidate.experiences[editExprienceIdx].end,
-                                                  "Description":data.candidate.experiences[editExprienceIdx].description})
+  const handleClickOpenExperience = (idx, exp_id) => {
+    // check if an id is sent when opening
+    // no id -> create mutation
+    // id -> use it to find the form data of the select experience based on experiencesData index
+    // this holds form
     setEditExprienceIdx(idx)
+    setFormExperienceData({...formExperienceData, "Title":experiencesData.candidate.experiences[idx].position.title,
+                                                  //"EmploymentType":experiencesData.candidate.experiences[idx].employment.id,
+                                                  "CompanyName":experiencesData.candidate.experiences[idx].company.title,
+                                                  "Location":experiencesData.candidate.experiences[idx].location, 
+                                                  "Start":experiencesData.candidate.experiences[idx].start,
+                                                  "End":experiencesData.candidate.experiences[idx].end,
+                                                  "Description":experiencesData.candidate.experiences[idx].description});
     setOpenEdit(true);
   };
   const handleCloseEdit = () => {
-    setEditExprienceIdx(0)
     setOpenEdit(false);
   };
 
   const { loading, error, data } = useQuery(GET_PROFILE, {variables:{id:1}});
+  const { loading:experiencesLoading, data:experiencesData } = useQuery(GET_EXPERIENCES, {variables:{id:1}});
+  const { loading:educationsLoading, data:educationsData } = useQuery(GET_EDUCATIONS, {variables:{id:1}});
+  
   const [createExperiene, {loading2, error2}] = useMutation(ADD_EXPERIENCE, {variables:{candidateId:1, companyId:1, start:123, end:123, positionId:2, 
                                                                                      categoryId:1, employmentId:1, location: "San Fransisco", 
                                                                                      description:"Build recruiting platform"}})
   const [editExperience, {loading3, error3}] = useMutation(EDIT_EXPERIENCE)
+
+  const [refreshExperiences, { loading:experienceLoading, data:experienceData}] = useLazyQuery(GET_EXPERIENCES)
+
+  const handleSubmit = (e) =>{
+    alert(e.target.title.value);
+    e.preventDefault();
+
+      // editExperience({
+      //   variables: {
+      //     id:6,
+      //     location: 'location',
+      //     companyId: 1,
+      //     categoryId: 1,
+      //     description: "experience description",
+      //     employmentId: 1
+      //   }
+      // })
+  }
+
   if (loading) return 'Loading...';
+  if (experiencesLoading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
-
-  // console.log(data);
-
-  const handleInputAddExperience = (e) => {
-    const key = e.target.name;
-    console.log(key)
-    setFormExperienceAdd({...formExperienceAdd, [key]:e.target.value});
-    console.log(formExperienceAdd)
-  };
-
-  const handleInputEditExperience = (e) => {
-    const key = e.target.name;
-    console.log(formExperienceEdit)
-    setFormExperienceEdit({...formExperienceEdit, [key]:e.target.value});
-  };
-
-
 
   return(
     <Container component="main">
@@ -206,7 +226,7 @@ export default function Profile() {
             <DialogTitle>Add Experience</DialogTitle>
             <DialogContent>
               <TextField
-                name="Title"
+                name="title"
                 autoFocus
                 margin="dense"
                 id="name"
@@ -214,7 +234,6 @@ export default function Profile() {
                 fullWidth
                 variant="standard"
                 defaultValue=""
-                onChange={handleInputAddExperience}
               />
               <TextField
                 name="EmploymentType"
@@ -224,7 +243,6 @@ export default function Profile() {
                 label="Employment Type"
                 fullWidth
                 variant="standard"
-                onChange={handleInputAddExperience}
               />
               <TextField
                 name="CompanyName"
@@ -234,7 +252,6 @@ export default function Profile() {
                 label="Company Name"
                 fullWidth
                 variant="standard"
-                onChange={handleInputAddExperience}
               />
               <TextField
                 name="Location"
@@ -244,7 +261,6 @@ export default function Profile() {
                 label="Locaton"
                 fullWidth
                 variant="standard"
-                onChange={handleInputAddExperience}
               />
               <TextField
                 name="Start"
@@ -254,7 +270,6 @@ export default function Profile() {
                 label="Start"
                 fullWidth
                 variant="standard"
-                onChange={handleInputAddExperience}
               />
               <TextField
                 name="End"
@@ -265,7 +280,6 @@ export default function Profile() {
                 fullWidth
                 variant="standard"
                 defaultValue=""
-                onChange={handleInputAddExperience}
               />
               <TextField
                 name="Description"
@@ -276,12 +290,11 @@ export default function Profile() {
                 fullWidth
                 variant="standard"
                 defaultValue=""
-                onChange={handleInputAddExperience}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={createExperiene}>Submit</Button>
+              <Button type="submit">Submit</Button>
             </DialogActions>
           </Dialog>
 
@@ -289,90 +302,86 @@ export default function Profile() {
 
           <Dialog open={openEdit} onClose={handleCloseEdit}>
             <DialogTitle>Edit Experience</DialogTitle>
-            <DialogContent>
-              <TextField
-                name="Title"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Title"
-                fullWidth
-                variant="standard"
-                defaultValue={data.candidate.experiences[editExprienceIdx].position.title}
-                onChange={handleInputEditExperience}
-              />
-              <TextField
-                name="EmploymentType"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Employment Type"
-                fullWidth
-                variant="standard"
-                defaultValue=""
-                onChange={handleInputEditExperience}
-              />
-              <TextField
-                name="CompanyName"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Company Name"
-                fullWidth
-                variant="standard"
-                defaultValue={data.candidate.experiences[editExprienceIdx].company.title}
-                onChange={handleInputEditExperience}
-              />
-              <TextField
-                name="Location"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Locaton"
-                fullWidth
-                variant="standard"
-                defaultValue={data.candidate.experiences[editExprienceIdx].location}
-                onChange={handleInputEditExperience}
-              />
-              <TextField
-                name="Start"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Start"
-                fullWidth
-                variant="standard"
-                defaultValue={data.candidate.experiences[editExprienceIdx].start}
-                onChange={handleInputEditExperience}
-              />
-              <TextField
-                name="End"
-                autoFocus
-                margin="dense"
-                id="name"
-                label="End"
-                fullWidth
-                variant="standard"
-                defaultValue={data.candidate.experiences[editExprienceIdx].end}
-                onChange={handleInputEditExperience}
-              />
-              <TextField
-                name="Description"
-                id="standard-multiline-static"
-                label="Description"
-                multiline
-                rows={4}
-                fullWidth
-                variant="standard"
-                defaultValue={data.candidate.experiences[editExprienceIdx].description}
-                onChange={handleInputEditExperience}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseEdit}>Delete</Button>
-              <Button onClick={createExperiene}>Submit</Button>
-            </DialogActions>
+            <form onSubmit={handleSubmit}>
+              <DialogContent>
+                <TextField
+                  name="title"
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Title"
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+                <TextField
+                  name="EmploymentType"
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Employment Type"
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+                <TextField
+                  name="CompanyName"
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Company Name"
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+                <TextField
+                  name="Location"
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Locaton"
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+                <TextField
+                  name="Start"
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Start"
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+                <TextField
+                  name="End"
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="End"
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+                <TextField
+                  name="Description"
+                  id="standard-multiline-static"
+                  label="Description"
+                  multiline
+                  rows={4}
+                  fullWidth
+                  variant="standard"
+                  defaultValue=""
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseEdit}>Delete</Button>
+                <Button type="submit">Submit</Button>
+              </DialogActions>
+            </form>
           </Dialog>
+
 
 
           <Card sx={{ mb: 2 }}>
@@ -393,8 +402,8 @@ export default function Profile() {
                 subheader="Yamaha Inc."
               />
             </CardActionArea> */}
-            {data.candidate.experiences.map((exp, idx) => {
-                return(<div onClick={() => handleClickOpenEdit(idx, exp.id)}>
+            {experiencesData.candidate.experiences.map((exp, idx) => {
+                return(<div onClick={() => handleClickOpenExperience(idx, exp.id)}>
                   <ProfileInfoCard 
                     key = {idx}
                     company = {exp.company.title}
@@ -406,19 +415,8 @@ export default function Profile() {
                   <Divider variant="inset"/>
                 </div>)
             })}
-
             
-            
-            {/* company={data.candidate.experiences.company.title} */}
-            <CardActionArea>
-              <CardHeader
-                avatar={
-                  <Avatar alt="Google" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTgXvZycVg8nFhEteByZ-aL16Jv-2bNch2GdfV&s=0" />
-                }
-                title="Junior Web Developer"
-                subheader="Google Inc."
-              />
-            </CardActionArea>
+            {/* company={experiencesData.experiences.company.title} */}
           </Card>
         </Grid>
         <Grid item sm={12} md={4} sx={{ p: { xs: 2, md: 3 } }}>
