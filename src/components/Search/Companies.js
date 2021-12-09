@@ -17,52 +17,7 @@ export default function Companies() {
             <Grid item md={4}>
               Company List
               <nav className="searchResults" aria-label="search results">
-                <List>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                    <ListItemAvatar>
-                      <Avatar alt="Yamaha" src="https://www.adacgj.com/uploads/1/2/3/7/123777558/yamaha-icon-26_orig.jpg" />
-                    </ListItemAvatar>
-                      <ListItemText
-                        primary="Yamaha"
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                            </Typography>
-                            {"203 Job Openings"}
-                          </React.Fragment>
-                        }
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar alt="Honeywell" src="https://www.versacall.com/wp-content/uploads/2017/09/Honeywell-Logo-Featured.jpg" />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary="Honeywell"
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                            </Typography>
-                            {"87 Job Openings"}
-                          </React.Fragment>
-                        }
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
+
               </nav>
             </Grid>
             <Grid item xs>

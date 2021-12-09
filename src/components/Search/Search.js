@@ -1,4 +1,4 @@
-import {React, Fragment, useState, useEffect} from "react";
+import {React, Fragment, useState} from "react";
 import { useHistory, useParams } from "react-router";
 import axios from "axios"
 // import Box from "@mui/material/Box";
@@ -45,6 +45,7 @@ const GET_OPENINGS = gql`
       id
       title
       description
+      location
       companyId
       company{
         title
@@ -92,9 +93,9 @@ export default function Search() {
                   variant="body2"
                   color="text.secondary"
                   >
-                  2 jobs found <Chip size="small" sx={{ ml:1 }} label="Post a free job" component="a" href="/post" variant="outlined" color="primary" clickable />
+                  jobs found <Chip size="small" sx={{ ml:1 }} label="Post a free job" component="a" href="/post" variant="outlined" color="primary" clickable />
                 </Typography>
-                    {openingsData.openings.map((o, idx) => {return (<div>
+                    {openingsData.openings.map((o, idx) => {return (<div  style={{marginBottom:'12px'}}>
                       <JobMiniCard
                         key = {idx}
                         title = {o.title}
@@ -108,7 +109,7 @@ export default function Search() {
                   variant="body2"
                   color="text.secondary"
                   >
-                  2 companies found
+                  companies found
                 </Typography>
                     {companiesData.companies.map((c, idx) => {return (<div>
                       <CompanyMiniCard

@@ -37,6 +37,10 @@ const GET_COMPANY_OPENINGS = gql`
             id
             title
             description
+            candidate {
+              first
+              last
+            }
           }
         }`;
 
@@ -45,6 +49,7 @@ const GET_COMPANY = gql`
           company(id:$id) {
             title
             description
+            location
           }
         }`;
 
@@ -63,8 +68,8 @@ export default function Company() {
 
   return(
     <Container component="main">
-      <Grid container sx={{ my: { xs: 2, md: 0 } }}>
-        <Grid item md={5} sx={{ p: { xs: 2, md: 3 } }}>
+      <Grid container sx={{ py: 2 }}>
+        <Grid item md={6} sx={{ mx: 'auto' }}>
           <Card sx={{ mb: 2 }}>
             <Box alignItems='center' sx={{p:1, display:'flex'}}>
               <Avatar alt={data.company.title} src={"//logo.clearbit.com/"+data.company.title.toLowerCase()+".com"} />
@@ -86,19 +91,23 @@ export default function Company() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid item md={7} sx={{ p: { xs: 2, md: 3 } }}>
-          <Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
-            Jobs at {data.company.title}
-          </Typography>
-          {openingsData.openings.map((o, idx) => {return (<div>
-            <JobCard
-              key = {idx}
-              title = {o.title}
-              description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
-              company = {data.company.title}
-              src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
-            </div>)})}
+          <Card>
+            <CardContent>
+              <Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+                Jobs at {data.company.title}
+              </Typography>
+              {openingsData.openings.map((o, idx) => {return (<div style={{marginBottom:'12px'}}>
+                <JobCard
+                  key = {idx}
+                  title = {o.title}
+                  description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
+                  company = {data.company.title}
+                  first = {o.candidate.first}
+                  last = {o.candidate.last}
+                  src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
+              </div>)})}
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Container>);

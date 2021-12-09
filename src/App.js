@@ -12,6 +12,7 @@ import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import Navbar from "./components/Navbar/Navbar";
 import Settings from "./components/Settings/Settings";
+import Admin from "./components/Admin/Admin";
 
 import Search from "./components/Search/Search";
 import Jobs from "./components/Search/Jobs";
@@ -57,6 +58,7 @@ function App() {
           <div style={{paddingLeft:'56px'}}>
           <Switch>
             <Route path="/" exact component={Signup}/>
+            <Route path="/admin" exact component={Admin}/>
             <Route path="/signup" exact component={Signup}/>
             <Route path="/login" exact component={Login}/>
             <Route path="/search" exact component={Search}/>
@@ -65,7 +67,7 @@ function App() {
             <Route path="/jobs" exact component={Jobs}/>
             <Route path="/job/:id" exact component={Job}/>
             <Route path="/company/:id" exact component={Company}/>
-            <Route path="/u" exact component={Profile}/>
+            <Route path="/u/:id" exact component={Profile}/>
             <Route path="/settings" exact component={Settings}/>
 
             <Route path="/search/candidates" exact component={Candidates}/>

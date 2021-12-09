@@ -14,11 +14,18 @@ import Typography from "@mui/material/Typography";
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 
 import Input from "@mui/material/Input";
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareIcon from '@mui/icons-material/Share';
 import SearchIcon from "@mui/icons-material/Search";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import WorkIcon from '@mui/icons-material/Work';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -33,6 +40,7 @@ import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 
 import JobCard from "../Card/JobCard";
+import CompanyCard from "../Card/CompanyCard";
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
@@ -43,6 +51,18 @@ const GET_OPENINGS = gql`
             id
             title
             description
+            location
+            candidateId
+            salaryLow
+            salaryHigh
+            employment {
+              title
+            }
+            candidateId
+            candidate {
+              first
+              last
+            }
             companyId
             company{
               title
@@ -56,9 +76,24 @@ const GET_SINGLE_OPENING = gql`
       id
       title
       description
+      location
+      startMonth
+      startYear
+      salaryLow
+      salaryHigh
+      candidateId
+      employment {
+        title
+      }
+      candidateId
+      candidate {
+        first
+        last
+      }
       companyId
       company{
-          title
+        title
+        description
       }
     }
   }`;
@@ -135,47 +170,56 @@ export default function Jobs() {
             </Container>
           </Paper>
           <Container>
-            <Typography
-                      sx={{ display: "flex", mb:1, px:1 }}
-                      component="p"
-                      variant="body2"
-                      color="text.secondary"
-                      >
-                      3 jobs found <Chip size="small" sx={{ ml:1 }} label="Post a free job" component="a" href="/post" variant="outlined" color="primary" clickable />
-            </Typography>
+            <Chip size="small" sx={{ ml:1, mb:1 }} label="Post a free job" component="a" href="/post" color="success" clickable />
             <Grid container sx={{ my: { xs: 2, md: 0 } }}>
-              <Grid item md={4} sx={{  px:1}}>
-                    {openingsData.openings.map((o, idx) => {return (<div onClick={() => getSingleOpening({ variables: { id: o.id } })}>
+              <Grid item md={4} sx={{px:1}}>
+                    {openingsData?openingsData.openings.map((o, idx) => {return (<div style={{marginBottom:'12px'}} onClick={() => getSingleOpening({ variables: { id: o.id } })}>
                       <JobCard
                         key = {idx}
+                        candidate_id = {o.candidateId}
                         title = {o.title}
                         description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
+                        first = {o.candidate.first}
+                        last = {o.candidate.last}
+                        location = {o.location}
                         company = {o.company.title}
-                        src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
-                      </div>)})}
+                        employment = {o.employment.title} />
+                      </div>)}):"No job openings"}
               </Grid>
               <Grid item md={8}>
               {openingData?
                 <Card sx={{mb:2}}>
-                  <CardContent sx={{pb:0}}>
-                    <Typography sx={{fontWeight: 'bold'}} component="h1" variant="h6">
-                      {openingData.opening.title}
-                    </Typography>
-                  </CardContent>
-                  <Divider sx={{my:2}} />
                   <CardHeader
-                    sx={{py:0}}
                     avatar={
                       <Avatar alt={openingData.opening.company.title} src={"//logo.clearbit.com/"+openingData.opening.company.title.toLowerCase()+".com"} />
                     }
-                    title={openingData.opening.company.title}
-                    subheader={"Palo Alto"}
+                    title=<Typography sx={{fontWeight: 'bold'}} component="h1" variant="h6">
+                      {openingData.opening.title}
+                    </Typography>
+                    subheader={openingData.opening.company.title}
                     action={<Button variant="contained" onClick={handleClickOpen}>
                       Apply Now
                     </Button>}
                   />
-                  <Divider sx={{my:2}} />
                   <CardContent sx={{pt:0}}>
+                    <Stack direction="row" spacing={1}>
+                      <Chip size="small" color="primary" sx={{mr:.5}} icon={<WorkIcon />} label={openingData.opening.employment.title}  />
+                      <Chip size="small" color="primary" icon={<LocationOnIcon />} label={openingData.opening.location}  />
+                      <Chip size="small" color="success" icon={<AttachMoneyIcon />} label={openingData.opening.salaryLow + " - " + openingData.opening.salaryHigh}  />
+                      <Chip size="small"
+                        color="info"
+                        avatar=<Avatar alt="Natacha" src={"https://mui.com/static/images/avatar/"+openingData.opening.recruiterId+".jpg"} />
+                        label={openingData.opening.candidate.first + " " + openingData.opening.candidate.last}
+                        component="a"
+                        href={"/u/"+1}
+
+                        clickable
+                      />
+                      <Chip size="small" icon={<AccessTimeIcon />} label="2 hours ago"  />
+                    </Stack>
+                  </CardContent>
+                  <Divider/>
+                  <CardContent>
                     <Typography>
                       {openingData.opening.location}
                     </Typography>
@@ -183,6 +227,26 @@ export default function Jobs() {
                       {openingData.opening.description}
                     </div>
                   </CardContent>
+                  <Divider/>
+                  <CardContent>
+                    <Typography
+                      component="h3"
+                      variant="h6">About the Company</Typography>
+                    <CompanyCard
+                      id = {openingData.opening.companyId}
+                      title = {openingData.opening.company.title}
+                      description={openingData.opening.company.description.length > 300 ? openingData.opening.company.description.substring(0, 300) + "..." : openingData.opening.company.description}
+                       />
+                  </CardContent>
+                  <Divider/>
+                  <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteIcon />
+                    </IconButton>
+                    <IconButton aria-label="share">
+                      <ShareIcon />
+                    </IconButton>
+                  </CardActions>
                   <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>Apply </DialogTitle>
                     <DialogContent>

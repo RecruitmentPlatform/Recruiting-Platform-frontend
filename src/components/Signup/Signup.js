@@ -11,6 +11,8 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 
+import JobCard from "../Card/JobCard";
+
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
@@ -18,28 +20,11 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
+import Avatar from '@mui/material/Avatar';
+
+import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 import { gql, useQuery } from '@apollo/client';
-
-const SIGN_UP_CANDIDATE = gql`
-  mutation {
-    addTodo(email: $email, password: $password) {
-      email
-      password
-    }
-  }
-`;
-
-// const SIGN_UP_RECRUITER = gql`
-//   mutation createRecruiter($email: String!, $password: String!) {
-//     addTodo(email: $email, password: $password) {
-//       email
-//       password
-//     }
-//   }
-// `;
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const Signup = () => {
 
@@ -97,6 +82,36 @@ const Signup = () => {
           <Typography variant="h5" align="center" color="text.secondary" paragraph>
             Search for a job or a company.
           </Typography>
+          <Card sx={{mb:2}}>
+            <CardContent>
+
+            </CardContent>
+          </Card>
+          <Card sx={{ mb: 2 }}>
+            <CardHeader
+              sx={{pb:0}}
+              avatar={
+                <Avatar
+                  alt="Ali Connors"
+                  src="https://mui.com/static/images/avatar/3.jpg"
+                />
+              }
+              title={"Ali Connors"}
+              subheader={"5 hours ago"}
+            />
+            <CardContent>
+              <Typography variant="body2" color="text.secondary" component="p" sx={{mb:1}}>
+                {
+                  "Please check out my job at Google! It has amazing benefits!"
+                }
+              </Typography>
+                <JobCard
+                  key = "0"
+                  title = "Software Engineer L3"
+                  description="Join the software engineering team at Facebook and work on..."
+                  company = "Facebook" />
+            </CardContent>
+          </Card>
         </Container>
       </Box>)
 }

@@ -18,15 +18,19 @@ const client = new ApolloClient({
 
 const theme = createTheme({
   palette: {
-    type: "light"
+    type: "light",
+   background: {
+      default: "#000"
+    }
   }
 });
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-  <CssBaseline />
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider></ThemeProvider>,
+    <CssBaseline />
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  </ThemeProvider>,
   document.getElementById('root')
 );
