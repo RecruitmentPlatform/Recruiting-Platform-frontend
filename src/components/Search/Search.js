@@ -72,7 +72,7 @@ export default function Search() {
 
   const { loading:companiesLoading, data:companiesData } = useQuery(GET_COMPANIES, {variables:{query}});
 
-  const history = useHistory()
+  //const history = useHistory()
 
   if (openingsLoading) return 'Loading...';
   if (companiesLoading) return 'Loading...';
@@ -98,6 +98,7 @@ export default function Search() {
                     {openingsData.openings.map((o, idx) => {return (<div  style={{marginBottom:'12px'}}>
                       <JobMiniCard
                         key = {idx}
+                        id = {o.id}
                         title = {o.title}
                         description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
                         company = {o.company.title}
@@ -111,11 +112,12 @@ export default function Search() {
                   >
                   companies found
                 </Typography>
-                    {companiesData.companies.map((c, idx) => {return (<div>
+                    {companiesData.companies.map((company, idx) => {return (<div>
                       <CompanyMiniCard
                         key = {idx}
-                        title = {c.title}
-                        description={c.description.length > 10 ? c.description.substring(0, 80) + "..." : c.description}
+                        id = {company.id}
+                        title = {company.title}
+                        description={company.description.length > 10 ? company.description.substring(0, 80) + "..." : company.description}
                         src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
                       </div>)})}
               </Grid>

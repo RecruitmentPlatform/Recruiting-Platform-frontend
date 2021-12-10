@@ -55,7 +55,7 @@ function App() {
         <Router>
           <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
           <Navbar/>
-          <div style={{paddingLeft:'56px'}}>
+          <div /*style={{paddingLeft:'56px'}}*/>
           <Switch>
             <Route path="/" exact component={Signup}/>
             <Route path="/admin" exact component={Admin}/>

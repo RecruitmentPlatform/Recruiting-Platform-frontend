@@ -30,7 +30,7 @@ export default function Applications() {
 
   // Execute the GraphQL query
   const { loading:applicationsLoading, error:applicationsError, data:applicationsData } = useQuery(GET_APPLICATIONS, {
-    variables: { candidateId : 1 },
+    variables: { candidateId : 2 },
   });
   if (applicationsLoading) return 'Loading applications...';
   if (applicationsError) return `Error! ${applicationsError.message}`;

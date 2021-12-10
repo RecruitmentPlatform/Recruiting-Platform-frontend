@@ -34,7 +34,7 @@ const ProfileCard =({first_name, last_name, position, location, src, company}) =
             />
         </ListItemButton>
         </ListItem>)
-    
+
 }
 
 export default ProfileCard;

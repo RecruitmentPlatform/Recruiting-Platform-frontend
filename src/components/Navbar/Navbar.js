@@ -6,6 +6,8 @@ import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
+import ListSubheader from '@mui/material/ListSubheader';
+import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -79,7 +81,7 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
-  width: `56px`
+  width: `0` /*56px*/
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -179,6 +181,9 @@ export default function Navbar() {
           </IconButton>
         </DrawerHeader>
         <Divider />
+        <Typography alignItems="center" sx={{fontWeight:'bold', mx:2, width: '100%', color:"#888", pt:1}} variant="h8" component="h5">
+          Search
+        </Typography>
         <List>
           {['Jobs', 'Companies'].map((text, index) => (
             <ListItem button component="a" href={"/"+text.toLowerCase()} key={text}>
@@ -190,6 +195,9 @@ export default function Navbar() {
           ))}
         </List>
         <Divider />
+        <Typography alignItems="center" sx={{fontWeight:'bold', mx:2, width: '100%', color:"#888", pt:1}} variant="h8" component="h5">
+          Manage
+        </Typography>
         <List>
           {['Applications', 'Interviews'].map((text, index) => (
             <ListItem button component="a" href={"/"+text.toLowerCase()} key={text}>
@@ -200,6 +208,7 @@ export default function Navbar() {
             </ListItem>
           ))}
         </List>
+        <Button size="small" variant="contained" sx={{mx:2}} href="/post">Post a Job</Button>
       </Drawer>
       <Box component="div" sx={{ flexGrow: 1 }}>
         <DrawerHeader />

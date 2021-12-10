@@ -18,9 +18,9 @@ const client = new ApolloClient({
 
 const theme = createTheme({
   palette: {
-    type: "light",
+    type: "dark",
    background: {
-      default: "#000"
+      default: "#f1f1f1"
     }
   }
 });

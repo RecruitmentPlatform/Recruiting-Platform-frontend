@@ -5,6 +5,7 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -17,23 +18,35 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 
-const GET_OPENING = gql`
-  query Opening($id:Int!){
-            opening(id:$id){
-            title
-            description
-            companyId
-            company{
-                title
-            }
-          }
-        }`;
+import JobSingleCard from "../Card/JobSingleCard";
 
-const CREATE_APPLICATION = gql`
-mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$status:Int!) {
-      createApplication(date:$date, openingId: $openingId, candidateId: $candidateId, status: $status){
-        id
+const GET_SINGLE_OPENING = gql`
+  query Opening($id:Int!){
+    opening(id:$id){
+      id
+      title
+      description
+      location
+      startMonth
+      startYear
+      salaryLow
+      salaryHigh
+      candidateId
+      employment {
+        title
       }
+      candidateId
+      candidate {
+        first
+        last
+      }
+      companyId
+      company{
+        title
+        description
+        website
+      }
+    }
   }`;
 
 export default function Job() {
@@ -42,8 +55,7 @@ export default function Job() {
     var { id } = useParams();
     id = parseInt(id);
     const history = useHistory()
-    const { loading, error, data } = useQuery(GET_OPENING, {variables:{id}});
-    const [createApplication, { data2, loading2, error2 }] = useMutation(CREATE_APPLICATION);
+    const { loading, error, data:openingData } = useQuery(GET_SINGLE_OPENING, {variables:{id}});
     const [isNull, setIsNull] = useState(false);
     const uid = +sessionStorage.getItem("uid");
 
@@ -59,50 +71,29 @@ export default function Job() {
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 
-    if (loading2) return 'Loading...';
-    if (error2) return `Error! ${error2.message}`;
-
-
     return(
-      <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
-        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-          <Typography component="h1" variant="h4" align="center">
-            {data.opening.title}
-          </Typography>
-          <Typography>
-            {data.opening.company.title}
-            {data.opening.location}
-          </Typography>
-          <Button variant="outlined" onClick={handleClickOpen}>
-            Apply Now
-          </Button>
-          <div>
-            {data.opening.description}
-          </div>
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Apply </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                <Alert severity="info">Before submitting a job application — <Link href="#">complete your profile</Link>!</Alert>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button variant="contained" type="button"
-              onClick={() => {
-                createApplication({
-                    variables: {
-                      date: 12345,
-                      openingId: id,
-                      candidateId: uid,
-                      status: 1
-                    }
-                  })
-                  .then(history.push("/applications"))
-              }}
-              >Apply</Button>
-            </DialogActions>
-          </Dialog>
-        </Paper>
-      </Container>);
+      <Container component="main">
+        <Grid container sx={{ my: 2 }}>
+          <Grid item md={8} xs={12} sx={{ mx: 'auto'}}>
+            {openingData?
+              <JobSingleCard
+              id = {openingData.opening.id}
+              title = {openingData.opening.title}
+              company = {openingData.opening.company.title}
+              companyId = {openingData.opening.companyId}
+              companyDescription = {openingData.opening.company.description}
+              description = {openingData.opening.description}
+              website = {openingData.opening.company.website}
+              employment = {openingData.opening.employment.title}
+              location = {openingData.opening.location}
+              salaryLow = {openingData.opening.salaryLow}
+              salaryHigh = {openingData.opening.salaryHigh}
+              candidateId = {openingData.opening.candidateId}
+              first = {openingData.opening.candidate.first}
+              last = {openingData.opening.candidate.last} />
+              :null}
+        </Grid>
+      </Grid>
+    </Container>
+      );
 }
