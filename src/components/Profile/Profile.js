@@ -10,7 +10,8 @@ import Typography from '@mui/material/Typography';
 
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
@@ -65,7 +66,7 @@ function stringAvatar(name) {
     children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
 }
-
+// Profile GQL Commands
 const GET_PROFILE = gql`
   query GetProfile($id:Int!){
           candidate(id:$id) {
@@ -74,6 +75,7 @@ const GET_PROFILE = gql`
             description
           }
         }`;
+// Experience GQL Commands
 const GET_EXPERIENCES = gql`
   query GetExperiences($id:Int!){
         candidate(id:$id) {
@@ -97,47 +99,59 @@ const GET_EXPERIENCES = gql`
           }
         }
       }`;
-
-const GET_EDUCATIONS = gql`
-  query GetEducations($id:Int!){
-        candidate(id:$id) {
-            educations {
-              id
-              startMonth
-              startYear
-              endMonth
-              endYear
-              description
-              college {
-                id
-                title
-              }
-              degree {
-                title
-              }
-            }
-          }
-        }`;
-const GET_SKILLS = gql`
-  query GetSkills($id:Int!){
-        candidate(id:$id) {
-          skills {
-            title
-            skilltypeId
-          }
-        }
-      }`;
 const ADD_EXPERIENCE = gql`
-    mutation CreateExperience($candidateId:Int!, $companyId:Int!,$start:Int!, $end:Int!, $positionId:Int!, $categoryId:Int!, $employmentId:Int!,
-                              $location:String!, $description:String!) {
-        createExperience(candidateId:$candidateId, companyId:$companyId, start: $start, end: $end, positionId: $positionId, categoryId: $categoryId,
-                         employmentId:$employmentId, location:$location, description:$description){
-                           id
-                         }}`;
+    mutation CreateExperience(
+        $title:String!,
+        $candidateId:Int!,
+        $companyId:Int!,
+        $startMonth:Int!,
+        $startYear:Int!,
+        $endMonth:Int!,
+        $endYear:Int!,
+        $employmentId:Int!,
+        $location:String!,
+        $description:String!
+      ) {
+        createExperience(
+          title:$title,
+          candidateId:$candidateId,
+          companyId:$companyId,
+          startMonth:$startMonth,
+          startYear:$startYear,
+          endMonth:$endMonth,
+          endYear:$endYear,
+          employmentId:$employmentId,
+          location:$location,
+          description:$description
+        ){
+          id
+        }}`;
 
 const EDIT_EXPERIENCE = gql`
-    mutation UpdateExperience($id:Int, $location:String, $companyId:Int, $categoryId:Int, $description:String, $employmentId:Int) {
-        updateExperience(id:$id, location:$location, companyId: $companyId, categoryId: $categoryId, description:$description, employmentId:$employmentId) {
+    mutation UpdateExperience(
+        $id:Int,
+        $title:String!,
+        $candidateId:Int!,
+        $companyId:Int!,
+        $startMonth:Int!,
+        $startYear:Int!,
+        $endMonth:Int!,
+        $endYear:Int!,
+        $employmentId:Int!,
+        $location:String!,
+        $description:String!) {
+        updateExperience(
+          id:$id,
+          title:$title,
+          candidateId:$candidateId,
+          companyId:$companyId,
+          startMonth:$startMonth,
+          startYear:$startYear,
+          endMonth:$endMonth,
+          endYear:$endYear,
+          employmentId:$employmentId,
+          location:$location,
+          description:$description) {
               id
             }}`;
 
@@ -147,16 +161,90 @@ const DELETE_EXPERIENCE = gql`
         success
       }
     }`;
+// Education GQL Commands
+const GET_EDUCATIONS = gql`
+  query GetEducations($id:Int!){
+    candidate(id:$id) {
+      educations {
+        id
+        startMonth
+        startYear
+        endMonth
+        endYear
+        description
+        college {
+          id
+          title
+        }
+        degree {
+          title
+        }
+      }
+    }
+  }`;
+
+// Skill GQL Commands
+const GET_SKILLS = gql`
+  query GetSkills($id:Int!){
+    candidate(id:$id) {
+      skills {
+        title
+        skilltype {
+          title
+        }
+      }
+    }
+  }`;
+
+const GET_ALL_SKILLS = gql`
+  query GetAllSkills{
+    skills {
+      id
+      title
+    }
+  }`;
+
+const ADD_SKILL_TO_CANDIDATE = gql`
+  mutation AddSkillToCandidate($id:Int!,$candidateId:Int!){
+    addSkillToCandidate(id:$id,candidateId:$candidateId) {
+      success
+    }
+  }
+`;
+
+const REMOVE_SKILL_FROM_CANDIDATE = gql`
+  mutation RemoveSkillFromCandidate($id:Int!,$candidateId:Int!){
+    removeSkillFromCandidate(id:$id,candidateId:$candidateId) {
+      success
+    }
+  }
+`;
+
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
 
 export default function Profile() {
   var { id } = useParams();
   id = parseInt(id);
 
-  const [formExperienceData, setFormExperienceData] = useState({title:"", employmentId:"", companyName:"",location:"",start:"",end:"", description:""})
+  const [formExperienceData, setFormExperienceData] = useState({title:"", employmentId:"", companyId:"",location:"",startMonth:"",startYear:"",endMonth:"",endYear:"",description:""})
 
   // Define default values of state variables for later updating
     // Modal data
   const [openEditExperience, setOpenEditExperience] = useState(false);
+  const [openEditSkill, setOpenEditSkill] = useState(false);
   const [openId, setOpenId] = useState();
     // Dialog
   const [action, setAction] = useState("Add");
@@ -169,12 +257,14 @@ export default function Profile() {
       setAction("Edit");
 
       setFormExperienceData({...formExperienceData,
-        title:experiencesData.candidate.experiences[exp_list_index].position.title,
+        title:experiencesData.candidate.experiences[exp_list_index].title,
         employmentId:experiencesData.candidate.experiences[exp_list_index].employment.id,
-        companyName:experiencesData.candidate.experiences[exp_list_index].company.title,
+        companyId:experiencesData.candidate.experiences[exp_list_index].company.id,
         location:experiencesData.candidate.experiences[exp_list_index].location,
-        start:experiencesData.candidate.experiences[exp_list_index].start,
-        end:experiencesData.candidate.experiences[exp_list_index].end,
+        startMonth:experiencesData.candidate.experiences[exp_list_index].startMonth,
+        startYear:experiencesData.candidate.experiences[exp_list_index].startYear,
+        endMonth:experiencesData.candidate.experiences[exp_list_index].endMonth,
+        endYear:experiencesData.candidate.experiences[exp_list_index].endYear,
         description:experiencesData.candidate.experiences[exp_list_index].description}
       );
     }
@@ -182,27 +272,41 @@ export default function Profile() {
     else {
       setOpenId();
       setAction("Add");
-      setFormExperienceData({...formExperienceData, title:"", employmentId:"", companyName:"",location:"",start:"",end:"", description:""});
+      setFormExperienceData({...formExperienceData, title:"", employmentId:"", companyId:"",location:"",startMonth:"",startYear:"",endMonth:"",endYear:"",description:""});
     }
     setOpenEditExperience(true);
   };
+  const handleClickOpenSkill = () => {
+    setOpenEditSkill(true);
+  };
   const handleCloseEditExperience = () => {
     setOpenEditExperience(false);
+  };
+  const handleCloseEditSkill = () => {
+    setOpenEditSkill(false);
   };
 
   const { loading:profileLoading, error:profileError, data:profileData } = useQuery(GET_PROFILE, {variables:{id}});
   const [refreshExperiences, { loading:experiencesLoading, data:experiencesData }] = useLazyQuery(GET_EXPERIENCES, {variables:{id},fetchPolicy: 'network-only'});
   const { loading:educationsLoading, data:educationsData } = useQuery(GET_EDUCATIONS, {variables:{id:1}});
   const [refreshSkills, { loading:skillsLoading, data:skillsData }] = useLazyQuery(GET_SKILLS, {variables:{id},fetchPolicy: 'network-only'});
+  const { loading:allskillsLoading, data:allskillsData } = useQuery(GET_ALL_SKILLS);
 
   useEffect(() => {
     refreshExperiences();
     refreshSkills();
   }, []);
 
-  const [createExperience, {loading:createExperienceLoading, error:createExperienceError}] = useMutation(ADD_EXPERIENCE);
-  const [editExperience, {loading3, error3}] = useMutation(EDIT_EXPERIENCE)
+  const [createExperience] = useMutation(ADD_EXPERIENCE);
+  const [editExperience] = useMutation(EDIT_EXPERIENCE)
   const [deleteExperience] = useMutation(DELETE_EXPERIENCE)
+
+  /*const [createEducation] = useMutation(ADD_EDUCATION);
+  const [editEducation] = useMutation(EDIT_EDUCATION)
+  const [deleteEducation] = useMutation(DELETE_EDUCATION);*/
+
+  const [addSkillToCandidate] = useMutation(ADD_SKILL_TO_CANDIDATE)
+  const [removeSkillFromCandidate] = useMutation(REMOVE_SKILL_FROM_CANDIDATE);
 
   const handleSubmitExperience = (e) =>{
     e.preventDefault();
@@ -210,10 +314,11 @@ export default function Profile() {
     if(openId != null) {
       editExperience({
         variables: {
+          candidateId: 1,
           id: openId,
+          title: e.target.title.value,
           employmentId: parseInt(e.target.employmentId.value),
-          companyId: parseInt(e.target.companyName.value),
-          position: e.target.position.value,
+          companyId: parseInt(e.target.companyId.value),
           location: e.target.location.value,
           startMonth: parseInt(e.target.startMonth.value),
           startYear: parseInt(e.target.startYear.value),
@@ -227,9 +332,10 @@ export default function Profile() {
     else {
       createExperience({
         variables: {
+          candidateId: 1,
+          title: e.target.title.value,
           employmentId: parseInt(e.target.employmentId.value),
-          companyId: parseInt(e.target.companyName.value),
-          position: e.target.position.value,
+          companyId: parseInt(e.target.companyId.value),
           location: e.target.location.value,
           startMonth: parseInt(e.target.startMonth.value),
           startYear: parseInt(e.target.startYear.value),
@@ -251,28 +357,38 @@ export default function Profile() {
     //Refresh the experience list
     refreshExperiences();
   };
+  const handleSubmitSkill = (e) =>{
+    e.preventDefault();
+    // Check if ID is set for updating
 
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
+    addSkillToCandidate({
+      variables: {
+        candidateId: 1,
+        id: parseInt(e.target.skill_id.value),
+     }
+    });
+    //Close the dialog
+    setOpenEditSkill(false);
+    //Refresh the experience list
+    refreshSkills();
+  }
+  const handleRemoveSkill = (skill_id) =>{
+    removeSkillFromCandidate({variables:{skill_id}});
+    //Refresh the experience list
+    refreshSkills();
+  };
 
   if (profileLoading) return 'Loading experiences...';
   if (experiencesLoading) return 'Loading experiences...';
   if (educationsLoading) return 'Loading experiences...';
   if (skillsLoading) return 'Loading skills...';
+  if (allskillsLoading) return 'Loading all skills...';
 
   if (profileError) return `Error! ${profileError.message}`;
+
+  const skill_options = allskillsData.skills.map((skill) => {
+    return {label:skill.title,value:skill.id};
+  });
 
   return(
     <Container component="main">
@@ -304,6 +420,7 @@ export default function Profile() {
             <form onSubmit={handleSubmitExperience}>
               <DialogContent>
                 <TextField
+                  size="small"
                   name="title"
                   margin="dense"
                   label="Title"
@@ -312,6 +429,7 @@ export default function Profile() {
                   defaultValue={formExperienceData.title}
                 />
                 <TextField
+                  size="small"
                   type="number"
                   name="employmentId"
                   margin="dense"
@@ -322,6 +440,7 @@ export default function Profile() {
                   defaultValue={formExperienceData.employmentId}
                 />
                 <TextField
+                  size="small"
                   type="number"
                   name="companyId"
                   margin="dense"
@@ -329,9 +448,10 @@ export default function Profile() {
                   label="Company"
                   fullWidth
                   variant="outlined"
-                  defaultValue={formExperienceData.companyName}
+                  defaultValue={formExperienceData.companyId}
                 />
                 <TextField
+                  size="small"
                   name="location"
                   margin="dense"
                   id="name"
@@ -340,26 +460,9 @@ export default function Profile() {
                   variant="outlined"
                   defaultValue={formExperienceData.location}
                 />
-                <Select
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  multiple
-                  value={personName}
-                  onChange={handleChange}
-                  input={<OutlinedInput label="Name" />}
-                  MenuProps={MenuProps}
-                >
-                  {months.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
                 <TextField
-                  type="select"
+                  size="small"
+                  select
                   name="startMonth"
                   margin="dense"
                   id="name"
@@ -367,8 +470,18 @@ export default function Profile() {
                   fullWidth
                   variant="outlined"
                   defaultValue={formExperienceData.startMonth}
-                />
+                >
+                  {months.map((month,mid) => (
+                  <MenuItem
+                    key={mid}
+                    value={mid+1}
+                  >
+                    {month}
+                  </MenuItem>
+                   ))}
+                </TextField>
                 <TextField
+                  size="small"
                   type="number"
                   name="startYear"
                   margin="dense"
@@ -379,7 +492,8 @@ export default function Profile() {
                   defaultValue={formExperienceData.startYear}
                 />
                 <TextField
-                  type="select"
+                  select
+                  size="small"
                   name="endMonth"
                   margin="dense"
                   id="name"
@@ -387,10 +501,20 @@ export default function Profile() {
                   fullWidth
                   variant="outlined"
                   defaultValue={formExperienceData.endMonth}
-                />
+                >
+                  {months.map((month,mid) => (
+                  <MenuItem
+                    key={mid}
+                    value={mid+1}
+                  >
+                    {month}
+                  </MenuItem>
+                   ))}
+                </TextField>
                 <TextField
+                  size="small"
                   type="number"
-                  name="startYear"
+                  name="endYear"
                   margin="dense"
                   id="name"
                   label="End Year"
@@ -399,16 +523,7 @@ export default function Profile() {
                   defaultValue={formExperienceData.endYear}
                 />
                 <TextField
-                  type="number"
-                  name="end"
-                  margin="dense"
-                  id="name"
-                  label="End"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.end}
-                />
-                <TextField
+                  size="small"
                   name="description"
                   id="standard-multiline-static"
                   label="Description"
@@ -421,27 +536,31 @@ export default function Profile() {
                 />
               </DialogContent>
               <DialogActions>
-                {action=='edit'?<Button onClick={handleDeleteExperience}>Delete</Button>:null}
+                {action=='Edit'?<Button onClick={handleDeleteExperience}>Delete</Button>:null}
                 <Button type="submit">Submit</Button>
               </DialogActions>
             </form>
           </Dialog>
 
           <Card sx={{ mb: 2 }}>
-            <CardHeader  sx={{ pb: 0 }}
+            <CardHeader
               action={
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenExperience()}>
                   <AddIcon />
                 </IconButton>
               }
-              title="Experience"
+              title=<Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+                Experience
+              </Typography>
             />
+            <Divider/>
             {experiencesData.candidate.experiences.map((exp, exp_list_index) => {
                 return(<div onClick={() => handleClickOpenExperience(exp_list_index)}>
+
                   <ExperienceCard
                     key = {exp_list_index}
                     company = {exp.company.title}
-                    title = {exp.position.title}
+                    title = {exp.title}
                     location = {exp.location}
                     start = {exp.start}
                     end = {exp.end}
@@ -451,10 +570,46 @@ export default function Profile() {
                 </div>)
             })}
           </Card>
+
+          <Dialog open={openEditSkill} onClose={handleCloseEditSkill}>
+            <DialogTitle>Add Skill</DialogTitle>
+            <form onSubmit={handleSubmitSkill}>
+              <DialogContent>
+                <TextField
+                  select
+                  size="small"
+                  name="skill_id"
+                  margin="dense"
+                  label="Skill"
+                  fullWidth
+                  variant="outlined"
+                >
+                  {allskillsData.skills.map((skill) => (
+                  <MenuItem
+                    value={skill.id}
+                  >
+                    {skill.title}
+                  </MenuItem>
+                   ))}
+                </TextField>
+                <Autocomplete
+                  disablePortal
+                  name="skill_id"
+                  options={skill_options}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Skill" />}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button type="submit">Add</Button>
+              </DialogActions>
+            </form>
+          </Dialog>
+
           <Card>
             <CardHeader  sx={{ pb: 0 }}
               action={
-                <IconButton aria-label="edit" /*onClick = {() => handleExperienceOpen()}*/>
+                <IconButton aria-label="edit" onClick = {() => handleClickOpenSkill()}>
                   <AddIcon />
                 </IconButton>
               }
