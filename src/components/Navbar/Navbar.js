@@ -23,6 +23,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import WorkIcon from '@mui/icons-material/Work';
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
+import Container from "@mui/material/Container";
 
 const drawerWidth = 240;
 
@@ -144,38 +145,37 @@ export default function Navbar() {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              //marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Search action="/search"
-          method="GET">
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search..."
-              inputProps={{ "aria-label": "search","name":"q" }}
-            />
-          </Search>
-          <Box sx={{ flexGrow: 1 }} />
-          <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
-        </Toolbar>
+        <Container>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                //marginRight: '36px',
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Search action="/search"
+            method="GET">
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search..."
+                inputProps={{ "aria-label": "search","name":"q" }}
+              />
+            </Search>
+            <Box sx={{ flexGrow: 1 }} />
+            <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
+          </Toolbar>
+        </Container>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <Typography alignItems="center" sx={{display:'flex', fontWeight:'bold', textDecoration:'none', width: '100%', color:"#888"}} href="/" variant="h6" noWrap component="a">
-            <WorkIcon/> Recruit
-          </Typography>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>

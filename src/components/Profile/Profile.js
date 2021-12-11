@@ -38,6 +38,7 @@ import Add from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import ExperienceCard from "../Card/ExperienceCard";
+import JobCard from "../Card/JobCard";
 
 function stringToColor(string) {
   let hash = 0;
@@ -190,6 +191,21 @@ const GET_EDUCATIONS = gql`
     }
   }`;
 
+// Job Post GQL Commands
+const GET_CANDIDATE_OPENINGS = gql`
+  query GetCandidateOpenings($id:Int!){
+    candidate(id:$id) {
+      openings {
+        id
+        title
+        description
+        company {
+          title
+        }
+      }
+    }
+  }`;
+
 // Skill GQL Commands
 const GET_SKILLS = gql`
   query GetSkills($id:Int!){
@@ -312,7 +328,15 @@ export default function Profile() {
       );
       if(experiencesData.candidate.experiences[exp_list_index].employment != null)
         setFormExperienceData({...formExperienceData,
-          employmentId:experiencesData.candidate.experiences[exp_list_index].employment.id
+          title:experiencesData.candidate.experiences[exp_list_index].title,
+          employmentId:experiencesData.candidate.experiences[exp_list_index].employment.id,
+          companyId:experiencesData.candidate.experiences[exp_list_index].company.id,
+          location:experiencesData.candidate.experiences[exp_list_index].location,
+          startMonth:experiencesData.candidate.experiences[exp_list_index].startMonth,
+          startYear:experiencesData.candidate.experiences[exp_list_index].startYear,
+          endMonth:experiencesData.candidate.experiences[exp_list_index].endMonth,
+          endYear:experiencesData.candidate.experiences[exp_list_index].endYear,
+          description:experiencesData.candidate.experiences[exp_list_index].description
         });
     // No ID set, create new experience
     }
@@ -334,6 +358,7 @@ export default function Profile() {
   };
 
   const [refreshProfile, { loading:profileLoading, error:profileError, data:profileData }] = useLazyQuery(GET_CANDIDATE, {variables:{id}});
+  const { data:openingsData, loading:openingsLoading } = useQuery(GET_CANDIDATE_OPENINGS, {variables:{id}});
   const [refreshExperiences, { loading:experiencesLoading, data:experiencesData }] = useLazyQuery(GET_EXPERIENCES, {variables:{id},fetchPolicy: 'network-only'});
   const { loading:educationsLoading, data:educationsData } = useQuery(GET_EDUCATIONS, {variables:{id:1}});
   const [refreshSkills, { loading:skillsLoading, data:skillsData }] = useLazyQuery(GET_SKILLS, {variables:{id},fetchPolicy: 'network-only'});
@@ -431,6 +456,7 @@ export default function Profile() {
   };
 
   if (profileLoading) return 'Loading experiences...';
+  if (openingsLoading) return 'Loading...';
   if (experiencesLoading) return 'Loading experiences...';
   if (educationsLoading) return 'Loading experiences...';
   if (skillsLoading) return 'Loading skills...';
@@ -507,6 +533,31 @@ export default function Profile() {
             </CardContent>
           </Card>
 
+          {openingsData?
+            <Card sx={{ mb: 2 }}>
+              <CardHeader sx={{ pb: 0 }}
+                action={
+                  <IconButton aria-label="edit" /*onClick = {() => handleClickOpenExperience()}*/>
+                    <AddIcon />
+                  </IconButton>
+                }
+                title=<Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+                  Job Postings
+                </Typography>
+              />
+              {openingsData.candidate.openings.map((o, idx) => {return (<div style={{marginBottom:'12px'}}>
+                <JobCard
+                  key = {idx}
+                  id = {o.id}
+                  title = {o.title}
+                  description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
+                  company = {o.company.title}
+                  first = {profileData.candidate.first}
+                  last = {profileData.candidate.last} />
+              </div>)})}
+            </Card>
+            :null
+          }
           <Dialog open={openEditExperience} onClose={handleCloseEditExperience}>
             <DialogTitle>{action} Experience</DialogTitle>
             <form onSubmit={handleSubmitExperience}>
@@ -658,7 +709,6 @@ export default function Profile() {
                 Experience
               </Typography>
             />
-            {console.log(experiencesData)}
             {experiencesData.candidate.experiences.map((exp, exp_list_index) => {
                 return(<div onClick={() => handleClickOpenExperience(exp_list_index)}>
                   <ExperienceCard
@@ -706,7 +756,9 @@ export default function Profile() {
                   <AddIcon />
                 </IconButton>
               }
-              title="Skills"
+              title=<Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+                Skills
+              </Typography>
             />
             <CardContent>
               <Stack direction="row" spacing={1}>

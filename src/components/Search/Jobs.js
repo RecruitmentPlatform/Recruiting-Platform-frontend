@@ -47,8 +47,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 const GET_OPENINGS = gql`
-  query Openings{
-          openings{
+  query Openings($query:String,$location:String){
+          openings(where: { or: [{ title: $query }, { location: $location }] }){
             id
             title
             description
@@ -108,8 +108,13 @@ mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$statu
   }`;
 
 export default function Jobs() {
+  let search = window.location.search;
+  let params = new URLSearchParams(search);
+  let query = params.get('q');
+  let location = params.get('l');
 
-  const { loading:openingsLoading, data:openingsData } = useQuery(GET_OPENINGS);
+  const { loading:openingsLoading, data:openingsData } = useQuery(GET_OPENINGS, {variables:{query: query, location: location}});
+
   const [getSingleOpening,
     { data:openingData, loading:openingLoading }]
      = useLazyQuery(GET_SINGLE_OPENING);

@@ -99,6 +99,7 @@ export default function Company() {
               {openingsData.openings.map((o, idx) => {return (<div style={{marginBottom:'12px'}}>
                 <JobCard
                   key = {idx}
+                  id = {o.id}
                   title = {o.title}
                   description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
                   company = {data.company.title}

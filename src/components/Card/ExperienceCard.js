@@ -7,11 +7,26 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import WorkIcon from '@mui/icons-material/Work';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
 const ExperienceCard = ({title, employment, company, location, startMonth, startYear, endMonth, endYear
 , description}) =>{
   var date = null;
   if(startMonth != null & startYear != null)
-    date = startMonth + ", " + startYear + " - "+ (endMonth & endYear?endMonth + ", " + endYear:"Present");
+    date = months[startMonth-1] + ", " + startYear + " - "+ (endMonth & endYear?months[endMonth-1] + ", " + endYear:"Present");
 
     return (<CardActionArea>
                 <CardHeader sx = {{pb:1}}
@@ -27,9 +42,12 @@ const ExperienceCard = ({title, employment, company, location, startMonth, start
                     {location?<Chip label={location} size="small" icon={<LocationOnIcon />} />:null}
                     {date?<Chip label={date} size="small" icon={<AccessTimeFilledIcon />} />:null}
                   </Stack>
-                  <Typography variant="body2" color="text.secondary">
-                    {description}
-                  </Typography>
+                  {description?
+                    <Typography variant="body2" color="text.secondary">
+                      {description}
+                    </Typography>
+                    :null
+                  }
                 </CardContent>
             </CardActionArea>)
 }
