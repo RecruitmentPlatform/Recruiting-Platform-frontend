@@ -40,8 +40,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 const GET_OPENINGS = gql`
-  query Openings($query:String){
-    openings(where:{title:$query}){
+  query Openings{
+    openings{
       id
       title
       description
@@ -54,8 +54,8 @@ const GET_OPENINGS = gql`
   }`;
 
 const GET_COMPANIES = gql`
-  query Companies($query:String){
-    companies(where:{title:$query}){
+  query Companies{
+    companies{
       id
       title
       description

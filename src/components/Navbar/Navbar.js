@@ -145,34 +145,32 @@ export default function Navbar() {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Container>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                //marginRight: '36px',
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Search action="/search"
-            method="GET">
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search..."
-                inputProps={{ "aria-label": "search","name":"q" }}
-              />
-            </Search>
-            <Box sx={{ flexGrow: 1 }} />
-            <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
-          </Toolbar>
-        </Container>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{
+              //marginRight: '36px',
+              ...(open && { display: 'none' }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Search action="/search"
+          method="GET">
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search..."
+              inputProps={{ "aria-label": "search","name":"q" }}
+            />
+          </Search>
+          <Box sx={{ flexGrow: 1 }} />
+          <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
+        </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>

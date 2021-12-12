@@ -8,7 +8,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 const client = new ApolloClient({
@@ -16,21 +16,20 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-const theme = createTheme({
+const theme = createMuiTheme({
   palette: {
-    type: "dark",
-   background: {
-      default: "#f1f1f1"
+    background: {
+      default: "#000"
     }
   }
 });
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
+  <MuiThemeProvider theme={theme}>
     <CssBaseline />
     <ApolloProvider client={client}>
       <App />
     </ApolloProvider>
-  </ThemeProvider>,
+  </MuiThemeProvider>,
   document.getElementById('root')
 );

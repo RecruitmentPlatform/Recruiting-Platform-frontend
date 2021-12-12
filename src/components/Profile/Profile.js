@@ -21,6 +21,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import PublicIcon from '@mui/icons-material/Public';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -38,7 +39,7 @@ import Add from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import ExperienceCard from "../Card/ExperienceCard";
-import JobCard from "../Card/JobCard";
+import JobListCard from "../Card/JobListCard";
 
 function stringToColor(string) {
   let hash = 0;
@@ -74,15 +75,50 @@ const GET_CANDIDATE = gql`
     candidate(id:$id) {
       first
       last
+      headline
+      location
       description
+      genderId
+      gender {
+        title
+      }
+      pronounId
+      pronoun {
+        title
+      }
+      ethnicityId
+      ethnicity {
+        title
+      }
     }
   }`;
 const UPDATE_CANDIDATE = gql`
-mutation UpdateCandidate($id:Int!,$first:String!,$last:String!,$description:String){
-  updateCandidate(id:$id,first:$first,last:$last,description:$description) {
+mutation UpdateCandidate($id:Int!,$first:String!,$last:String!,$headline:String,$location:String,$description:String, $genderId: Int, $pronounId: Int, $ethnicityId: Int){
+  updateCandidate(id:$id,first:$first,last:$last,headline:$headline,location:$location,description:$description,genderId: $genderId, pronounId: $pronounId, ethnicityId: $ethnicityId) {
     id
   }
 }`;
+const GET_ALL_GENDERS = gql`
+  query GetAllGenders{
+    genders{
+      id
+      title
+    }
+  }`;
+const GET_ALL_ETHNICITIES = gql`
+  query GetAllEthnicities{
+    ethnicities {
+      id
+      title
+    }
+  }`;
+const GET_ALL_PRONOUNS = gql`
+  query GetAllPronouns{
+    pronouns {
+      id
+      title
+    }
+  }`;
 // Experience GQL Commands
 const GET_EXPERIENCES = gql`
   query GetExperiences($id:Int!){
@@ -143,11 +179,11 @@ const EDIT_EXPERIENCE = gql`
         $companyId:Int!,
         $startMonth:Int!,
         $startYear:Int!,
-        $endMonth:Int!,
-        $endYear:Int!,
-        $employmentId:Int!,
-        $location:String!,
-        $description:String!) {
+        $endMonth:Int,
+        $endYear:Int,
+        $employmentId:Int,
+        $location:String,
+        $description:String) {
         updateExperience(
           id:$id,
           title:$title,
@@ -175,22 +211,86 @@ const GET_EDUCATIONS = gql`
     candidate(id:$id) {
       educations {
         id
+        candidateId
+        collegeName
+        majorName
+        collegeId
+        degreeId
+        degree {
+          title
+        }
         startMonth
         startYear
         endMonth
         endYear
         description
-        college {
-          id
-          title
-        }
-        degree {
-          title
-        }
       }
     }
   }`;
 
+const ADD_EDUCATION = gql`
+    mutation CreateEducation(
+      $candidateId:Int!,
+      $collegeName:String!,
+      $collegeId:Int,
+      $degreeId:Int,
+      $majorName:String,
+      $startMonth:Int,
+      $startYear:Int,
+      $endMonth:Int,
+      $endYear:Int,
+      $description:String
+      ) {
+        createEducation(
+          candidateId:$candidateId,
+          collegeName:$collegeName,
+          collegeId:$collegeId,
+          majorName:$majorName
+          degreeId:$degreeId,
+          startMonth:$startMonth,
+          startYear:$startYear,
+          endMonth:$endMonth,
+          endYear:$endYear,
+          description:$description
+        ){
+          id
+        }}`;
+
+const EDIT_EDUCATION = gql`
+    mutation UpdateEducation(
+        $id:Int,
+        $candidateId:Int!,
+        $collegeName:String!,
+        $collegeId:Int,
+        $majorName:String,
+        $degreeId:Int,
+        $startMonth:Int,
+        $startYear:Int,
+        $endMonth:Int,
+        $endYear:Int,
+        $description:String
+        ) {
+        updateEducation(
+          id:$id,
+          candidateId:$candidateId,
+          collegeName:$collegeName,
+          collegeId:$collegeId,
+          majorName:$majorName
+          degreeId:$degreeId,
+          startMonth:$startMonth,
+          startYear:$startYear,
+          endMonth:$endMonth,
+          endYear:$endYear,
+          description:$description
+          ) {
+              id
+            }}`;
+const DELETE_EDUCATION = gql`
+    mutation DeleteEducation($id:Int!) {
+      deleteEducation(id:$id) {
+        success
+      }
+    }`;
 // Job Post GQL Commands
 const GET_CANDIDATE_OPENINGS = gql`
   query GetCandidateOpenings($id:Int!){
@@ -199,7 +299,15 @@ const GET_CANDIDATE_OPENINGS = gql`
         id
         title
         description
+        location
+        salaryLow
+        salaryHigh
+        startMonth
+        startYear
         company {
+          title
+        }
+        employment {
           title
         }
       }
@@ -211,6 +319,7 @@ const GET_SKILLS = gql`
   query GetSkills($id:Int!){
     candidate(id:$id) {
       skills {
+        id
         title
         skilltype {
           title
@@ -252,6 +361,33 @@ const GET_ALL_EMPLOYMENTS = gql`
       title
     }
   }`;
+
+// Companies GQL Commands
+const GET_ALL_COMPANIES = gql`
+  query GetAllCompanies {
+    companies {
+      id
+      title
+    }
+  }`;
+
+// Companies GQL Commands
+const GET_ALL_COLLEGES = gql`
+  query GetAllColleges {
+    colleges {
+      id
+      title
+    }
+  }`;
+// Degrees Commands
+const GET_ALL_DEGREES = gql`
+  query GetAllDegrees {
+    degrees {
+      id
+      title
+    }
+  }`;
+
 const months = [
   'January',
   'February',
@@ -273,12 +409,16 @@ export default function Profile() {
 
   const [formExperienceData, setFormExperienceData] = useState({title:"", employmentId:"", companyId:"",location:"",startMonth:"",startYear:"",endMonth:"",endYear:"",description:""});
 
+  const [formEducationData, setFormEducationData] = useState({collegeId:"", collegeName:"", degreeId:"",majorName:"",startMonth:"",startYear:"",endMonth:"",endYear:"",description:""});
+
 
   const [openEditExperience, setOpenEditExperience] = useState(false);
+  const [openEditEducation, setOpenEditEducation] = useState(false);
   const [openEditSkill, setOpenEditSkill] = useState(false);
   const [openId, setOpenId] = useState();
   const [selectedSkillId, setSelectedSkillId] = useState();
   const [selectedCompanyId, setSelectedCompanyId] = useState();
+  const [selectedCollegeId, setSelectedCollegeId] = useState();
   const [action, setAction] = useState("Add");
 
   // Edit Profile Dialog Options
@@ -298,7 +438,12 @@ export default function Profile() {
         id: id,
         first: e.target.first.value,
         last: e.target.last.value,
-        description: e.target.description.value
+        headline: e.target.headline.value,
+        location: e.target.location.value,
+        description: e.target.description.value,
+        genderId: parseInt(e.target.genderId.value),
+        pronounId: parseInt(e.target.pronounId.value),
+        ethnicityId: parseInt(e.target.ethnicityId.value)
      }
    });
     //Close the dialog
@@ -307,7 +452,6 @@ export default function Profile() {
     refreshProfile();
   }
   // End Edit Profile Dialog Options
-
 
   const handleClickOpenExperience = (exp_list_index) => {
 
@@ -347,11 +491,52 @@ export default function Profile() {
     }
     setOpenEditExperience(true);
   };
+  const handleClickOpenEducation = (edu_list_index) => {
+
+    // ID of education on Profile Page is set, Editing...
+    if(edu_list_index != null){
+      setOpenId(educationsData.candidate.educations[edu_list_index].id);
+      setAction("Edit");
+
+      setFormEducationData({...formEducationData,
+        collegeName:educationsData.candidate.educations[edu_list_index].collegeName,
+        degreeId:educationsData.candidate.educations[edu_list_index].degreeId,
+        majorName:educationsData.candidate.educations[edu_list_index].majorName,
+        startMonth:educationsData.candidate.educations[edu_list_index].startMonth,
+        startYear:educationsData.candidate.educations[edu_list_index].startYear,
+        endMonth:educationsData.candidate.educations[edu_list_index].endMonth,
+        endYear:educationsData.candidate.educations[edu_list_index].endYear,
+        description:educationsData.candidate.educations[edu_list_index].description}
+      );
+      if(educationsData.candidate.educations[edu_list_index].collegeId != null)
+        setFormEducationData({...formEducationData,
+          collegeName:educationsData.candidate.educations[edu_list_index].collegeName,
+          collegeId:educationsData.candidate.educations[edu_list_index].collegeId,
+          degreeId:educationsData.candidate.educations[edu_list_index].degreeId,
+          majorName:educationsData.candidate.educations[edu_list_index].majorName,
+          startMonth:educationsData.candidate.educations[edu_list_index].startMonth,
+          startYear:educationsData.candidate.educations[edu_list_index].startYear,
+          endMonth:educationsData.candidate.educations[edu_list_index].endMonth,
+          endYear:educationsData.candidate.educations[edu_list_index].endYear,
+          description:educationsData.candidate.educations[edu_list_index].description
+        });
+    // No ID set, create new education
+    }
+    else {
+      setOpenId();
+      setAction("Add");
+      setFormEducationData({...formEducationData, collegeId:"", collegeName:"", degreeId:"",majorName:"",startMonth:"",startYear:"",endMonth:"",endYear:"",description:""});
+    }
+    setOpenEditEducation(true);
+  };
   const handleClickOpenSkill = () => {
     setOpenEditSkill(true);
   };
   const handleCloseEditExperience = () => {
     setOpenEditExperience(false);
+  };
+  const handleCloseEditEducation = () => {
+    setOpenEditEducation(false);
   };
   const handleCloseEditSkill = () => {
     setOpenEditSkill(false);
@@ -360,27 +545,34 @@ export default function Profile() {
   const [refreshProfile, { loading:profileLoading, error:profileError, data:profileData }] = useLazyQuery(GET_CANDIDATE, {variables:{id}});
   const { data:openingsData, loading:openingsLoading } = useQuery(GET_CANDIDATE_OPENINGS, {variables:{id}});
   const [refreshExperiences, { loading:experiencesLoading, data:experiencesData }] = useLazyQuery(GET_EXPERIENCES, {variables:{id},fetchPolicy: 'network-only'});
-  const { loading:educationsLoading, data:educationsData } = useQuery(GET_EDUCATIONS, {variables:{id:1}});
+  const [refreshEducations, { loading:educationsLoading, data:educationsData }] = useLazyQuery(GET_EDUCATIONS, {variables:{id},fetchPolicy: 'network-only'});
   const [refreshSkills, { loading:skillsLoading, data:skillsData }] = useLazyQuery(GET_SKILLS, {variables:{id},fetchPolicy: 'network-only'});
 
   const { loading:allskillsLoading, data:allskillsData } = useQuery(GET_ALL_SKILLS);
   const { loading:allemploymentsLoading, data:allemploymentsData } = useQuery(GET_ALL_EMPLOYMENTS);
 
+  const { loading:allgendersLoading, data:allgendersData } = useQuery(GET_ALL_GENDERS);
+  const { loading:allpronounsLoading, data:allpronounsData } = useQuery(GET_ALL_PRONOUNS);
+  const { loading:allethnicitiesLoading, data:allethnicitiesData } = useQuery(GET_ALL_ETHNICITIES);
+  const { loading:allcompaniesLoading, data:allcompaniesData } = useQuery(GET_ALL_COMPANIES);
+  const { loading:allcollegesLoading, data:allcollegesData } = useQuery(GET_ALL_COLLEGES);
+  const { loading:alldegreesLoading, data:alldegreesData } = useQuery(GET_ALL_DEGREES);
+
   useEffect(() => {
     refreshProfile();
     refreshExperiences();
+    refreshEducations();
     refreshSkills();
   }, []);
 
   const [updateCandidate] = useMutation(UPDATE_CANDIDATE);
-
   const [createExperience] = useMutation(ADD_EXPERIENCE);
   const [editExperience] = useMutation(EDIT_EXPERIENCE)
   const [deleteExperience] = useMutation(DELETE_EXPERIENCE)
 
-  /*const [createEducation] = useMutation(ADD_EDUCATION);
+  const [createEducation] = useMutation(ADD_EDUCATION);
   const [editEducation] = useMutation(EDIT_EDUCATION)
-  const [deleteEducation] = useMutation(DELETE_EDUCATION);*/
+  const [deleteEducation] = useMutation(DELETE_EDUCATION);
 
   const [addSkillToCandidate] = useMutation(ADD_SKILL_TO_CANDIDATE)
   const [removeSkillFromCandidate] = useMutation(REMOVE_SKILL_FROM_CANDIDATE);
@@ -391,7 +583,7 @@ export default function Profile() {
     if(openId != null) {
       editExperience({
         variables: {
-          candidateId: 1,
+          candidateId: id,
           id: openId,
           title: e.target.title.value,
           employmentId: parseInt(e.target.employmentId.value),
@@ -409,7 +601,7 @@ export default function Profile() {
     else {
       createExperience({
         variables: {
-          candidateId: 1,
+          candidateId: id,
           title: e.target.title.value,
           employmentId: parseInt(e.target.employmentId.value),
           companyId: parseInt(e.target.companyId.value),
@@ -434,10 +626,62 @@ export default function Profile() {
     //Refresh the experience list
     refreshExperiences();
   };
+  const handleSubmitEducation = (e) =>{
+    e.preventDefault();
+    // Check if ID is set for updating
+    if(openId != null) {
+      editEducation({
+        variables: {
+          candidateId: id,
+          id: openId,
+          collegeName: e.target.collegeName.value,
+          collegeId: selectedCollegeId,
+          degreeId: parseInt(e.target.degreeId.value),
+          majorName:  e.target.majorName.value,
+          startMonth: parseInt(e.target.startMonth.value),
+          startYear: parseInt(e.target.startYear.value),
+          endMonth: parseInt(e.target.endMonth.value),
+          endYear: parseInt(e.target.endYear.value),
+          description: e.target.description.value
+       }
+     });
+    }
+    // No ID set, add new education
+    else {
+      createEducation({
+        variables: {
+          candidateId: id,
+          collegeName: e.target.collegeName.value,
+          collegeId: selectedCollegeId,
+          degreeId: parseInt(e.target.degreeId.value),
+          majorName:  e.target.majorName.value,
+          startMonth: parseInt(e.target.startMonth.value),
+          startYear: parseInt(e.target.startYear.value),
+          endMonth: parseInt(e.target.endMonth.value),
+          endYear: parseInt(e.target.endYear.value),
+          description: e.target.description.value
+       }
+     });
+    }
+    //Close the dialog
+    setOpenEditEducation(false);
+    //Refresh the education list
+    refreshEducations();
+  }
+  const handleDeleteEducation = () =>{
+    deleteEducation({variables:{id:openId}});
+    //Close the dialog
+    setOpenEditEducation(false);
+    //Refresh the education list
+    refreshEducations();
+  };
+  const handleRemoveSkill = (skill_id) => {
+    removeSkillFromCandidate({variables:{id:skill_id,candidateId:id}})
+    refreshSkills();
+  };
   const handleSubmitSkill = (e) =>{
     e.preventDefault();
     // Check if ID is set for updating
-
     addSkillToCandidate({
       variables: {
         candidateId: id,
@@ -445,12 +689,7 @@ export default function Profile() {
      }
     });
     //Close the dialog
-    setOpenEditSkill(false);
-    //Refresh the experience list
-    refreshSkills();
-  }
-  const handleRemoveSkill = (skill_id) =>{
-    removeSkillFromCandidate({variables:{skill_id}});
+    //setOpenEditSkill(false);
     //Refresh the experience list
     refreshSkills();
   };
@@ -467,42 +706,126 @@ export default function Profile() {
 
   return(
     <Container component="main">
-      <Grid container sx={{ my: { xs: 2, md: 0 } }}>
+      <Grid container>
         <Grid item md={6} xs={12} sx={{ mx: 'auto', mt:2}}>
           <Card sx={{ mb: 2 }}>
           <Dialog open={openEditProfile} onClose={handleCloseEditProfile}>
             <DialogTitle>Edit Profile</DialogTitle>
             <form onSubmit={handleSubmitProfile}>
               <DialogContent>
-                <TextField
-                  size="small"
-                  name="first"
-                  label="First Name"
-                  margin="dense"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={profileData.candidate.first}
-                />
-                <TextField
-                  size="small"
-                  name="last"
-                  label="Last Name"
-                  margin="dense"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={profileData.candidate.last}
-                />
-                <TextField
-                  size="small"
-                  name="description"
-                  label="Description"
-                  margin="dense"
-                  multiline
-                  rows={4}
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={profileData.candidate.description}
-                />
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      required
+                      size="small"
+                      name="first"
+                      label="First Name"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={profileData.candidate.first}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      required
+                      size="small"
+                      name="last"
+                      label="Last Name"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={profileData.candidate.last}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      size="small"
+                      name="headline"
+                      label="Headline"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={profileData.candidate.headline}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      size="small"
+                      name="location"
+                      label="Location"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={profileData.candidate.location}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      select
+                      size="small"
+                      fullWidth
+                      name="genderId"
+                      label="Gender Identity"
+                      defaultValue={profileData.candidate.genderId?profileData.candidate.genderId:null}
+                    >
+                      {allgendersData.genders.map((gender,eid) => (
+                      <MenuItem
+                        key={eid}
+                        value={gender.id}
+                      >
+                        {gender.title}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                      select
+                      size="small"
+                      fullWidth
+                      name="pronounId"
+                      label="Gender Pronoun"
+                      defaultValue={profileData.candidate.pronounId?profileData.candidate.pronounId:null}
+                    >
+                      {allpronounsData.pronouns.map((pronoun,eid) => (
+                      <MenuItem
+                        key={eid}
+                        value={pronoun.id}
+                      >
+                        {pronoun.title}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      select
+                      size="small"
+                      fullWidth
+                      name="ethnicityId"
+                      label="Ethnicity"
+                      defaultValue={profileData.candidate.ethnicityId?profileData.candidate.ethnicityId:null}
+                    >
+                      {allethnicitiesData.ethnicities.map((ethnicity,eid) => (
+                      <MenuItem
+                        key={eid}
+                        value={ethnicity.id}
+                      >
+                        {ethnicity.title}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      size="small"
+                      name="description"
+                      label="Description"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={profileData.candidate.description}
+                    />
+                  </Grid>
+                </Grid>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleCloseEditProfile}>Cancel</Button>
@@ -520,176 +843,209 @@ export default function Profile() {
             avatar={
               <Avatar {...stringAvatar(profileData.candidate.first+" "+profileData.candidate.last)} />
             }
-            title={profileData.candidate.first+" "+profileData.candidate.last}
-            subheader="Engineer at Facebook"
+            title=<Typography component="h1" sx={{fontSize:'18px'}}>{profileData.candidate.first+" "+profileData.candidate.last}
+                    {profileData.candidate.pronoun.title?
+                    <Typography sx={{ml:0.5,fontSize:'13px'}} variant="span" color="text.secondary">
+                      ({profileData.candidate.pronoun.title})
+                    </Typography>:null}
+                  </Typography>
+            subheader={profileData.candidate.headline}
             action={<IconButton aria-label="settings" onClick = {() => handleClickOpenEditProfile()}>
                       <EditIcon />
                     </IconButton>}
             />
-            <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                {profileData.candidate.description}
-              </Typography>
-            </CardContent>
+            {profileData.candidate.description || profileData.candidate.location ?
+              <CardContent sx={{pt:0}}>
+                {profileData.candidate.location?
+                <Typography alignItems='center' sx={{display:'flex'}} variant="body2" color="text.secondary">
+                  <PublicIcon/>{profileData.candidate.location}
+                </Typography>
+                : null}
+                {profileData.candidate.description?
+                <Typography variant="body2" color="text.secondary">
+                  {profileData.candidate.description}
+                </Typography>
+                : null}
+              </CardContent>
+            :null}
           </Card>
 
           {openingsData?
             <Card sx={{ mb: 2 }}>
-              <CardHeader sx={{ pb: 0 }}
-                action={
-                  <IconButton aria-label="edit" /*onClick = {() => handleClickOpenExperience()}*/>
-                    <AddIcon />
-                  </IconButton>
-                }
-                title=<Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+              <CardHeader sx={{py:1}}
+                title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
                   Job Postings
                 </Typography>
               />
-              {openingsData.candidate.openings.map((o, idx) => {return (<div style={{marginBottom:'12px'}}>
-                <JobCard
-                  key = {idx}
+              {openingsData.candidate.openings.map((o, opening_list_id) => {return (<div>
+                {opening_list_id > 0?
+                  <Divider variant="inset"/>
+                  :null}
+                <JobListCard
+                  key = {opening_list_id}
                   id = {o.id}
                   title = {o.title}
                   description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
                   company = {o.company.title}
                   first = {profileData.candidate.first}
-                  last = {profileData.candidate.last} />
+                  last = {profileData.candidate.last}
+                  location = {o.location}
+                  salaryLow = {o.salaryLow}
+                  salaryHigh = {o.salaryHigh}
+                  employment = {o.employment.title}
+                   />
               </div>)})}
             </Card>
             :null
           }
+
           <Dialog open={openEditExperience} onClose={handleCloseEditExperience}>
             <DialogTitle>{action} Experience</DialogTitle>
             <form onSubmit={handleSubmitExperience}>
               <DialogContent>
-                <TextField
-                  required
-                  size="small"
-                  type="number"
-                  name="companyId"
-                  margin="dense"
-                  id="name"
-                  label="Company"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.companyId}
-                />
-                <TextField
-                  required
-                  size="small"
-                  name="title"
-                  margin="dense"
-                  label="Title"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.title}
-                />
-                <TextField
-                  select
-                  size="small"
-                  margin="dense"
-                  fullWidth
-                  name="employmentId"
-                  label="Employment Type"
-                  defaultValue={formExperienceData.employmentId?formExperienceData.employmentId:null}
-                >
-                  {allemploymentsData.employments.map((employment,eid) => (
-                  <MenuItem
-                    key={eid}
-                    value={employment.id}
-                  >
-                    {employment.title}
-                  </MenuItem>
-                   ))}
-                </TextField>
-                <TextField
-                  size="small"
-                  name="location"
-                  margin="dense"
-                  id="name"
-                  label="Locaton"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.location}
-                />
-                <Divider sx={{my:2}} />
-                <TextField
-                  required
-                  size="small"
-                  select
-                  name="startMonth"
-                  margin="dense"
-                  id="name"
-                  label="Start Month"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.startMonth}
-                >
-                  {months.map((month,mid) => (
-                  <MenuItem
-                    key={mid}
-                    value={mid+1}
-                  >
-                    {month}
-                  </MenuItem>
-                   ))}
-                </TextField>
-                <TextField
-                  required
-                  size="small"
-                  type="number"
-                  name="startYear"
-                  margin="dense"
-                  id="name"
-                  label="Start Year"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.startYear}
-                />
-                <TextField
-                  select
-                  size="small"
-                  name="endMonth"
-                  margin="dense"
-                  id="name"
-                  label="End Month"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.endMonth}
-                >
-                  {months.map((month,mid) => (
-                  <MenuItem
-                    key={mid}
-                    value={mid+1}
-                  >
-                    {month}
-                  </MenuItem>
-                   ))}
-                </TextField>
-                <TextField
-                  size="small"
-                  type="number"
-                  name="endYear"
-                  margin="dense"
-                  id="name"
-                  label="End Year"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.endYear}
-                />
-                <Divider sx={{my:2}} />
-                <TextField
-                  size="small"
-                  name="description"
-                  id="standard-multiline-static"
-                  label="Description"
-                  margin="dense"
-                  multiline
-                  rows={4}
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={formExperienceData.description}
-                />
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <TextField
+                      required
+                      size="small"
+                      type="number"
+                      name="companyId"
+                      id="name"
+                      label="Company"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.companyId}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      size="small"
+                      name="title"
+                      label="Title"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.title}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      select
+                      size="small"
+                      fullWidth
+                      name="employmentId"
+                      label="Employment Type"
+                      defaultValue={formExperienceData.employmentId?formExperienceData.employmentId:null}
+                    >
+                      {allemploymentsData.employments.map((employment,eid) => (
+                      <MenuItem
+                        key={eid}
+                        value={employment.id}
+                      >
+                        {employment.title}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      size="small"
+                      name="location"
+                      id="name"
+                      label="Locaton"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.location}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider/>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      required
+                      size="small"
+                      select
+                      name="startMonth"
+                      id="name"
+                      label="Start Month"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.startMonth}
+                    >
+                      {months.map((month,mid) => (
+                      <MenuItem
+                        key={mid}
+                        value={mid+1}
+                      >
+                        {month}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      required
+                      size="small"
+                      type="number"
+                      name="startYear"
+                      id="name"
+                      label="Start Year"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.startYear}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      select
+                      size="small"
+                      name="endMonth"
+                      id="name"
+                      label="End Month"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.endMonth}
+                    >
+                      {months.map((month,mid) => (
+                      <MenuItem
+                        key={mid}
+                        value={mid+1}
+                      >
+                        {month}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      size="small"
+                      type="number"
+                      name="endYear"
+                      id="name"
+                      label="End Year"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.endYear}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider/>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      size="small"
+                      name="description"
+                      id="standard-multiline-static"
+                      label="Description"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formExperienceData.description}
+                    />
+                  </Grid>
+                </Grid>
               </DialogContent>
               <DialogActions>
                 {action=='Edit'?<Button onClick={handleDeleteExperience}>Delete</Button>:null}
@@ -699,18 +1055,21 @@ export default function Profile() {
           </Dialog>
 
           <Card sx={{ mb: 2 }}>
-            <CardHeader sx={{ pb: 0 }}
+            <CardHeader sx={{py:1}}
               action={
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenExperience()}>
                   <AddIcon />
                 </IconButton>
               }
-              title=<Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+              title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
                 Experience
               </Typography>
             />
             {experiencesData.candidate.experiences.map((exp, exp_list_index) => {
                 return(<div onClick={() => handleClickOpenExperience(exp_list_index)}>
+                {exp_list_index > 0?
+                  <Divider variant="inset"/>
+                  :null}
                   <ExperienceCard
                     key = {exp_list_index}
                     title = {exp.title}
@@ -723,7 +1082,180 @@ export default function Profile() {
                     endYear = {exp.endYear}
                     description = {exp.description}
                   />
+                </div>)
+            })}
+          </Card>
+
+          <Dialog open={openEditEducation} onClose={handleCloseEditEducation}>
+            <DialogTitle>{action} Education</DialogTitle>
+            <form onSubmit={handleSubmitEducation}>
+              <DialogContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Autocomplete
+                      defaultValue={{label:formEducationData.collegeName,id:formEducationData.collegeId}}
+                      size="small"
+                      clearOnBlur={false}
+                      name="collegeId"
+                      options={allcollegesData.colleges.map((college) => {
+                        return {label:college.title,id:college.id};
+                      })}
+                      fullWidth
+                      /*onChange = {(event, value) => setSelectedCollegeId(value.id)}*/
+                      renderInput={(params) => <TextField required {...params} name="collegeName" label="College" />}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      size="small"
+                      fullWidth
+                      name="majorName"
+                      label="Major"
+                      defaultValue={formEducationData.majorName}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      select
+                      size="small"
+                      fullWidth
+                      name="degreeId"
+                      label="Degree"
+                      defaultValue={formEducationData.degreeId?formEducationData.degreeId:null}
+                    >
+                      {alldegreesData.degrees.map((degree,did) => (
+                      <MenuItem
+                        key={did}
+                        value={degree.id}
+                      >
+                        {degree.title}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider/>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      required
+                      size="small"
+                      select
+                      name="startMonth"
+                      id="name"
+                      label="Start Month"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formEducationData.startMonth}
+                    >
+                      {months.map((month,mid) => (
+                      <MenuItem
+                        key={mid}
+                        value={mid+1}
+                      >
+                        {month}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      required
+                      size="small"
+                      type="number"
+                      name="startYear"
+                      id="name"
+                      label="Start Year"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formEducationData.startYear}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      select
+                      size="small"
+                      name="endMonth"
+                      id="name"
+                      label="End Month"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formEducationData.endMonth}
+                    >
+                      {months.map((month,mid) => (
+                      <MenuItem
+                        key={mid}
+                        value={mid+1}
+                      >
+                        {month}
+                      </MenuItem>
+                       ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      size="small"
+                      type="number"
+                      name="endYear"
+                      id="name"
+                      label="End Year"
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formEducationData.endYear}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider/>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      size="small"
+                      name="description"
+                      id="standard-multiline-static"
+                      label="Description"
+                      multiline
+                      rows={4}
+                      fullWidth
+                      variant="outlined"
+                      defaultValue={formEducationData.description}
+                    />
+                  </Grid>
+                </Grid>
+              </DialogContent>
+              <DialogActions>
+                {action=='Edit'?<Button onClick={handleDeleteEducation}>Delete</Button>:null}
+                <Button type="submit">Submit</Button>
+              </DialogActions>
+            </form>
+          </Dialog>
+
+          <Card sx={{ mb: 2 }}>
+            <CardHeader sx={{py:1}}
+              action={
+                <IconButton aria-label="edit" onClick = {() => handleClickOpenEducation()}>
+                  <AddIcon />
+                </IconButton>
+              }
+              title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
+                Education
+              </Typography>
+            />
+            {educationsData.candidate.educations.map((edu, edu_list_index) => {
+                return(<div onClick={() => handleClickOpenEducation(edu_list_index)}>
+                {edu_list_index > 0?
                   <Divider variant="inset"/>
+                  :null}
+                  <ExperienceCard
+                    key = {edu_list_index}
+                    title = {edu.majorName}
+                    company = {edu.collegeName}
+                    employment = {edu.degree.title}
+                    startMonth = {edu.startMonth}
+                    startYear = {edu.startYear}
+                    endMonth = {edu.endMonth}
+                    endYear = {edu.endYear}
+                    description = {edu.description}
+                  />
                 </div>)
             })}
           </Card>
@@ -733,7 +1265,6 @@ export default function Profile() {
             <form onSubmit={handleSubmitSkill}>
               <DialogContent>
                 <Autocomplete
-                  disablePortal
                   name="skill_id"
                   options={allskillsData.skills.map((skill) => {
                     return {label:skill.title,id:skill.id};
@@ -750,24 +1281,24 @@ export default function Profile() {
           </Dialog>
 
           <Card>
-            <CardHeader  sx={{ pb: 0 }}
+            <CardHeader sx={{ pb: 0, pt:1 }}
               action={
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenSkill()}>
                   <AddIcon />
                 </IconButton>
               }
-              title=<Typography sx={{fontWeight:'bold'}} component="h2" variant="h6">
+              title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
                 Skills
               </Typography>
             />
             <CardContent>
-              <Stack direction="row" spacing={1}>
+              <Grid container spacing={1}>
                 {skillsData?
                   skillsData.candidate.skills.map((skill, skill_list_index) => {
-                    return(<Chip key = {skill_list_index} label={skill.title} />)
+                    return(<Grid item><Chip key = {skill_list_index} label={skill.title} onDelete={() => handleRemoveSkill(skill.id)} /></Grid>)
                   })
                   :"No skills selected"}
-              </Stack>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
