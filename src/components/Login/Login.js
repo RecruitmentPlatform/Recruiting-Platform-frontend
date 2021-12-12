@@ -1,94 +1,100 @@
-import {React, useState} from "react";
+import { React, useContext } from 'react';
+import { useHistory } from 'react-router';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import {Link, useHistory } from "react-router-dom";
-//import axios from "axios"
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from "axios";
+import { LoginIdContext } from "../../AuthContext";
 
-const Login = () => {
 
-    const [userInput, setUserInput] = useState({"email":"","password":"", "type":"recruiter"})
-    const [signupType, setSignupType] = useState("recruiter");
-    const [helperMessage, setHelperMessage] = useState("")
-    const history = useHistory();
+export default function Login() {
 
-    const inputHandler = (e) => {
-        const key = e.target.name;
-        setUserInput({...userInput, [key]:e.target.value});
-    }
+    const history = useHistory()
+    const {loggedInId, setLoggedInId} = useContext(LoginIdContext);
 
-    // const submitHandler = async (e) => {
-    //     const response = await axios.post('http://127.0.0.1:5000/api/login', userInput);
-    //     const userData = await response.data
-    //     if (userData.status === "success"){
-    //         sessionStorage.setItem("session_id", userData.session_id)
-    //         history.push("/search");
-    //     }else{
-    //         setHelperMessage("Invalid credentials")
-    //         history.push("/login");
-    //     }
-    // }
-
-    const submitHandler = () => {
-        const userData = {status:"success", "session_id":12345, "uid":1}
-        if (userData.status === "success"){
-            sessionStorage.setItem("session_id", userData.session_id)
-            history.push("/search");
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const email = data.get('email');
+        const hash = data.get('hash');
+        const res = await axios.post('http://127.0.0.1:5000/auth', {"username":email, "password": hash});
+        const access_token = res.data.access_token
+        if(access_token){
+            const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
+            if(res.data.status === "success"){
+                setLoggedInId(res.data.id)
+                history.push("/jobs")
+            }
         }else{
-            setHelperMessage("Invalid credentials")
             history.push("/login");
         }
-    }
+    };
 
-    const changeType = (e) => {
-        setSignupType(e.target.name)
-        setUserInput({...userInput, ["type"]:e.target.name});
-    }
-
-    return (<Grid container>
-        <Grid item xs>
-        </Grid>
-        <Grid item md={4}>
-          <form className="form" onSubmit={submitHandler}>
-              <h1 className="login-title">Login</h1>
-              <div className="form-container-input">
-                  <TextField
-                      name = "email"
-                      required
-                      id="outlined-required"
-                      label="Email"
-                      type="email"
-                      variant="outlined"
-                      style = {{width: "100%"}}
-                      onChange={inputHandler}
-                  />
-              </div>
-              <div className="form-container-input">
-                  <TextField
-                      name = "password"
-                      required
-                      id="outlined-required"
-                      label="Password"
-                      variant="outlined"
-                      type="password"
-                      style = {{width: "100%"}}
-                      onChange={inputHandler}
-                  />
-              </div>
-              <button className="login-btn" onClick={submitHandler}>Login</button>
-              <p style={{margin:"5px 0 5px 0", color:"#F32013"}}>{helperMessage}</p>
-              <p style={{margin:"0 0 30px 0"}}>Do you have an account yet? <Link style={{textDecoration:"none"}}
-                                                                                   to="signup">Signup</Link></p>
-          </form>
-        </Grid>
-        <Grid item xs>
-        </Grid>
-      </Grid>)
-
-
-
-
-
-
+  return (
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="hash"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item>
+                <Link href="#" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
+  );
 }
-
-export default Login;
