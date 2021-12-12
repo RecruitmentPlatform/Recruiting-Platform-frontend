@@ -35,6 +35,7 @@ export default function Login() {
             const res = await axios.get('https://vm-react-auth.herokuapp.com/protected', { headers: { Authorization: `JWT ${access_token}` }})
             if(res.data.status === "success"){
                 setLoggedInId(res.data.id);
+                alert("Logged in successfully");
                 history.push("/home");
             }else{
             history.push("/login");
