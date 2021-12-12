@@ -45,7 +45,7 @@ function App() {
         <Navbar/>
         <Switch>
           <Route exact path="/" component={Signup}/>
-
+          <Route exact path="/login" component={Login}/>
           <Redirect from="*" to="/"/>
         </Switch>
       </Router>
