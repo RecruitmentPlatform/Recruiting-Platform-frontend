@@ -8,28 +8,28 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
   cache: new InMemoryCache()
 });
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     background: {
-      default: "#000"
+      default: "#f1f1f1"
     }
   }
 });
 
 ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
+  <ThemeProvider theme={theme}>
     <CssBaseline />
     <ApolloProvider client={client}>
       <App />
     </ApolloProvider>
-  </MuiThemeProvider>,
+  </ThemeProvider>,
   document.getElementById('root')
 );
