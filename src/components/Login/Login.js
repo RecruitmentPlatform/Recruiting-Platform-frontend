@@ -28,17 +28,19 @@ export default function Login() {
         const email = data.get('email');
         const hash = data.get('hash');
         const res = await axios.post('http://127.0.0.1:5000/auth', {"username":email, "password": hash});
-        const access_token = res.data.access_token
+        const access_token = res.data.access_token;
+
         if(access_token){
+            sessionStorage.setItem("token", access_token)
             const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
             if(res.data.status === "success"){
-                setLoggedInId(res.data.id)
-                history.push("/jobs")
-            }
-        }else{
+                setLoggedInId(res.data.id);
+                history.push("/home");
+            }else{
             history.push("/login");
-        }
-    };
+            }
+         }
+        };
 
   return (
       <Container component="main" maxWidth="xs">

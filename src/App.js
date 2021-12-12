@@ -9,7 +9,7 @@ import {
 import { useParams } from 'react-router-dom';
 //import components from /components
 import Login from "./components/Login/Login";
-import Signup from "./components/Signup/Signup";
+import Signup from "./components/Singup/Signup";
 import Homepage from "./components/Homepage/Homepage";
 import Navbar from "./components/Navbar/Navbar";
 import Settings from "./components/Settings/Settings";
