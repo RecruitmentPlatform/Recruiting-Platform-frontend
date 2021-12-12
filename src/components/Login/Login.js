@@ -27,12 +27,12 @@ export default function Login() {
         const data = new FormData(event.currentTarget);
         const email = data.get('email');
         const hash = data.get('hash');
-        const res = await axios.post('http://127.0.0.1:5000/auth', {"username":email, "password": hash});
+        const res = await axios.post('https://vm-react-auth.herokuapp.com/auth', {"username":email, "password": hash});
         const access_token = res.data.access_token;
 
         if(access_token){
             sessionStorage.setItem("token", access_token)
-            const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
+            const res = await axios.get('https://vm-react-auth.herokuapp.com/protected', { headers: { Authorization: `JWT ${access_token}` }})
             if(res.data.status === "success"){
                 setLoggedInId(res.data.id);
                 history.push("/home");

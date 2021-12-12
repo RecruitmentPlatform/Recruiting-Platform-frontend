@@ -29,7 +29,7 @@ export default function SignUp() {
         const last = data.get('last');
         const email = data.get('email');
         const hash = data.get('hash');
-        const res = await axios.post('http://127.0.0.1:5000/api/signup', {"first":first, "last":last, "email":email, "password": hash});
+        const res = await axios.post('https://vm-react-auth.herokuapp.com/api/signup', {"first":first, "last":last, "email":email, "password": hash});
         if(res.data.status === "success"){
             setLoggedInId(res.data.id)
             history.push("/login?msg:"+res.data.status);
