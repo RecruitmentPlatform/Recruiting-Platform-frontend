@@ -37,13 +37,13 @@ const ExperienceCard = ({title, employment, company, location, startMonth, start
                 subheader={company}
                 />
                 <CardContent sx = {{pt:0}}>
-                  <Stack direction="row" spacing={1} sx={{pb:1}}>
+                  <Stack direction="row" spacing={1}>
                     {employment?<Chip label={employment} size="small" icon={<WorkIcon />} />:null}
                     {location?<Chip label={location} size="small" icon={<LocationOnIcon />} />:null}
                     {date?<Chip label={date} size="small" icon={<AccessTimeFilledIcon />} />:null}
                   </Stack>
                   {description?
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography sx={{pt:1}} variant="body2" color="text.secondary">
                       {description}
                     </Typography>
                     :null
