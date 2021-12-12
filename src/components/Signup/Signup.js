@@ -1,119 +1,123 @@
-import {React, useState, useContext} from "react";
-import {Link, useHistory } from "react-router-dom"; //for routing
-import { AuthContext } from "../../AuthContext";
-import axios from "axios"
-
-import TextField from '@mui/material/TextField';
-import AppBar from '@mui/material/AppBar';
+import { React, useContext } from 'react';
+import {useHistory } from "react-router-dom";
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
-
-import JobCard from "../Card/JobCard";
-
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { LoginIdContext } from "../../AuthContext";
 
-import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import Avatar from '@mui/material/Avatar';
 
-import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
+export default function SignUp() {
 
-import { gql, useQuery } from '@apollo/client';
+    const history = useHistory();
+    const {loggedInId, setLoggedInId} = useContext(LoginIdContext);
 
-const Signup = () => {
-
-    const [userInput, setUserInput] = useState({"email":"","password":""})
-    const [helperMessage, setHelperMessage] = useState("")
-    const [signupType, setSignupType] = useState("recruiter");
-    const history = useHistory()
-
-    const inputHandler = (e) => {
-        const key = e.target.name;
-        setUserInput({...userInput, [key]:e.target.value});
-    }
-
-    const submitHandler = async (e) => {
-        console.log(userInput)
-        e.preventDefault();
-        const response = await axios.post('http://127.0.0.1:5000/api/signup', userInput);
-        const userData = response.data
-        console.log(userData)
-        if (userData.status === "success"){
-            sessionStorage.setItem("session_id", userData.session_id)
-            history.push("/search")
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const first = data.get('first');
+        const last = data.get('last');
+        const email = data.get('email');
+        const hash = data.get('hash');
+        const res = await axios.post('http://127.0.0.1:5000/api/signup', {"first":first, "last":last, "email":email, "password": hash});
+        if(res.data.status === "success"){
+            setLoggedInId(res.data.id)
+            history.push("/login?msg:"+res.data.status);
         }else{
-            setHelperMessage(userData.message)
-            history.push("/signup")
+            history.push("/signup");
         }
-    }
+    };
 
-    const changeType = (e) => {
-        if(e.target.name === "recruiter"){
-            setSignupType("recruiter");
-        }else{
-            setSignupType("candidate");
-        }
-    }
-
-    return (
-      <Box
-        sx={{
-          bgcolor: 'background.primary',
-          pt: 8,
-          pb: 6,
-        }}
-      >
-        <Container maxWidth="sm">
-          <Typography
-            component="h1"
-            variant="h2"
-            align="center"
-            color="text.primary"
-            gutterBottom
-          >
-            Begin Searching
+  return (
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
           </Typography>
-          <Typography variant="h5" align="center" color="text.secondary" paragraph>
-            Search for a job or a company.
-          </Typography>
-          <Card sx={{mb:2}}>
-            <CardContent>
-
-            </CardContent>
-          </Card>
-          <Card sx={{ mb: 2 }}>
-            <CardHeader
-              sx={{pb:0}}
-              avatar={
-                <Avatar
-                  alt="Ali Connors"
-                  src="https://mui.com/static/images/avatar/3.jpg"
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="first"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
                 />
-              }
-              title={"Ali Connors"}
-              subheader={"5 hours ago"}
-            />
-            <CardContent>
-              <Typography variant="body2" color="text.secondary" component="p" sx={{mb:1}}>
-                {
-                  "Please check out my job at Google! It has amazing benefits!"
-                }
-              </Typography>
-                <JobCard
-                  key = "0"
-                  title = "Software Engineer L3"
-                  description="Join the software engineering team at Facebook and work on..."
-                  company = "Facebook" />
-            </CardContent>
-          </Card>
-        </Container>
-      </Box>)
-}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="last"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="hash"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                />
+              </Grid>
 
-export default Signup;
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="#" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
+  );
+}

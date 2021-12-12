@@ -1,7 +1,6 @@
 import { createContext } from "react";
 
-export const AuthContext = createContext({
-                                            auth: "",
-                                            type: "",
-                                            setAuth: () => {}
+export const LoginIdContext = createContext({
+                                             loggedInId: "",
+                                             setLoggedInId: () => {}
                                          })

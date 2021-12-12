@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 //import components from /components
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
+import Homepage from "./components/Homepage/Homepage";
 import Navbar from "./components/Navbar/Navbar";
 import Settings from "./components/Settings/Settings";
 import Admin from "./components/Admin/Admin";
@@ -30,34 +31,34 @@ import Applications from "./components/Applications/Applications";
 import Interviews from "./components/Interviews/Interviews";
 import Profile from "./components/Profile/Profile";
 
-import {AuthContext} from "./AuthContext";
+import {LoginIdContext} from "./AuthContext";
 function App() {
 
-  const [auth, setAuth] = useState(sessionStorage.getItem("session_id"))
+  const [loggedInId, setLoggedInId] = useState("")
 
-  if(auth){
+  if(loggedInId.length === 0){
     return (
     <div className="App">
       <Router>
-        <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
+        <LoginIdContext.Provider value={{loggedInId:loggedInId, setLoggedInId:setLoggedInId}}>
         <Navbar/>
         <Switch>
 
           {/* <Route path="/search/recruiter" exact component={Recruiter}/> */}
           <Signup/>
         </Switch>
-        </AuthContext.Provider>
+        </LoginIdContext.Provider>
       </Router>
     </div>
   )}else{
     return (
       <div className="App">
         <Router>
-          <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
+          <LoginIdContext.Provider value={{loggedInId:loggedInId, setLoggedInId:setLoggedInId}}>
           <Navbar/>
           <div /*style={{paddingLeft:'56px'}}*/>
           <Switch>
-            <Route path="/" exact component={Signup}/>
+            <Route path="/" exact component={Homepage}/>
             <Route path="/admin" exact component={Admin}/>
             <Route path="/signup" exact component={Signup}/>
             <Route path="/login" exact component={Login}/>
@@ -75,7 +76,7 @@ function App() {
             <Route path="/registration/candidate" exact component={UpdateCandidate}/>
           </Switch>
           </div>
-          </AuthContext.Provider>
+          </LoginIdContext.Provider>
         </Router>
       </div>
     )
