@@ -35,9 +35,9 @@ import Profile from "./components/Profile/Profile";
 import {LoginIdContext} from "./AuthContext";
 function App() {
 
-  const [loggedInId, setLoggedInId] = useState("")
+  const [loggedInId, setLoggedInId] = useState(sessionStorage.getItem("token"))
 
-  if(loggedInId.length === 0){
+  if(loggedInId.length == 0){
     return (
       
     <div className="App">

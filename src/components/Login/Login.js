@@ -1,4 +1,4 @@
-import { React, useContext } from 'react';
+import { React } from 'react';
 import { useHistory } from 'react-router';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -20,7 +20,6 @@ import { LoginIdContext } from "../../AuthContext";
 export default function Login() {
 
     const history = useHistory()
-    const {loggedInId, setLoggedInId} = useContext(LoginIdContext);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -34,7 +33,7 @@ export default function Login() {
             sessionStorage.setItem("token", access_token)
             const res = await axios.get('https://vm-react-auth.herokuapp.com/protected', { headers: { Authorization: `JWT ${access_token}` }})
             if(res.data.status === "success"){
-                setLoggedInId(res.data.id);
+                sessionStorage.setItem("uid", res.data.id)
                 alert("Logged in successfully");
                 history.push("/home");
             }else{
