@@ -111,6 +111,7 @@ export default function Jobs() {
   const uid = +sessionStorage.getItem("uid");
   let search = window.location.search;
   let params = new URLSearchParams(search);
+  
   let query = params.get('q');
   let location = params.get('l');
 
