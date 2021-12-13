@@ -34,7 +34,7 @@ export default function Login() {
             if(res.data.status === "success"){
                 sessionStorage.setItem("uid", res.data.id)
                 alert("Logged in successfully");
-                history.push("/home");
+                history.push("/");
             }else{
             history.push("/login");
             }

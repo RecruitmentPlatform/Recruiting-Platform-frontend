@@ -35,18 +35,16 @@ import Profile from "./components/Profile/Profile";
 import {LoginIdContext} from "./AuthContext";
 function App() {
 
-  const [loggedInId, setLoggedInId] = useState(sessionStorage.getItem("token"))
 
-  if(loggedInId.length == 0){
+  if(sessionStorage.getItem("token")){
     return (
-      
     <div className="App">
       <Router>
         <Navbar/>
         <Switch>
-          <Route exact path="/" component={Signup}/>
+          <Route exact path="/signup" component={Signup}/>
           <Route exact path="/login" component={Login}/>
-          <Redirect from="*" to="/"/>
+          <Redirect from="*" to="/singup"/>
         </Switch>
       </Router>
     </div>
@@ -54,7 +52,7 @@ function App() {
     return (
       <div className="App">
         <Router>
-          <LoginIdContext.Provider value={{loggedInId:loggedInId, setLoggedInId:setLoggedInId}}>
+          {/* <LoginIdContext.Provider value={{loggedInId:loggedInId, setLoggedInId:setLoggedInId}}> */}
           <Navbar/>
           <div /*style={{paddingLeft:'56px'}}*/>
           <Switch>
@@ -74,7 +72,7 @@ function App() {
             <Redirect from="*" to="/"/>
           </Switch>
           </div>
-          </LoginIdContext.Provider>
+          {/* </LoginIdContext.Provider> */}
         </Router>
       </div>
     )
