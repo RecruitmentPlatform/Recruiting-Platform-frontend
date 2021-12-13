@@ -27,6 +27,7 @@ const GET_RECRUITERS = gql`
         `;
 
 export default function Recruiters (){
+  const uid = +sessionStorage.getItem("uid");
   const history = useHistory()
   const { loading, error, data } = useQuery(GET_RECRUITERS);
 

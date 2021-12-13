@@ -108,6 +108,7 @@ mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$statu
   }`;
 
 export default function Jobs() {
+  const uid = +sessionStorage.getItem("uid");
   let search = window.location.search;
   let params = new URLSearchParams(search);
   let query = params.get('q');

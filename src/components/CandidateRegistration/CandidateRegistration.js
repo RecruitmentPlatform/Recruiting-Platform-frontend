@@ -1,4 +1,4 @@
-import {React, useState, useContext} from "react";
+import {React, useState} from "react";
 import { useHistory } from "react-router";
 import { gql, useMutation } from '@apollo/client';
 //import {Link} from "react-router-dom";
@@ -15,7 +15,7 @@ const UPDATE_CANDIDATE = gql`
             }}`;
 
 const UpdateCandidate = () =>{
-
+    const uid = +sessionStorage.getItem("uid");
     const [userInput, setUserInput] = useState({"first":"","last":"","email":"","phone":"","description":""})
     const history = useHistory()
 

@@ -13,6 +13,7 @@ const ADD_EXPERIENCE = gql`
                          }}`;
 
 const AddExperienceForm = () => {
+    const uid = +sessionStorage.getItem("uid");
     const [formData, setFormData] = useState({"title":"", "employmentType":"", "CompanyName":"","Location":"","Start":"","End":"", "Description":""})
     const [open, setOpen] = useState(false);
     const handleClickOpen = (value) => {

@@ -27,7 +27,7 @@ import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/
 import { gql, useQuery } from '@apollo/client';
 
 const Homepage = () => {
-
+    const uid = +sessionStorage.getItem("uid");
     const [userInput, setUserInput] = useState({"email":"","password":""})
     const [helperMessage, setHelperMessage] = useState("")
     const [signupType, setSignupType] = useState("recruiter");

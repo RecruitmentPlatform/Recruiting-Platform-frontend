@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Divider from '@mui/material/Divider';
 
 export default function Admin() {
+  const uid = +sessionStorage.getItem("uid");
   return (<Container sx={{ px: { xs: 1, md: 2 }, py:1 }}>
             <Grid container>
               <Grid item xs={12} md={6} sx={{ mx: 'auto'}}>

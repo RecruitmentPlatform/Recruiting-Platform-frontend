@@ -29,7 +29,8 @@ const GET_CANDIDATES = gql`
         `;
 
 export default function Candidates (){
-  const history = useHistory()
+  const uid = +sessionStorage.getItem("uid");
+  const history = useHistory();
   const { loading, error, data } = useQuery(GET_CANDIDATES);
 
   if (loading) return 'Loading...';

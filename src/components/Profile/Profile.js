@@ -404,6 +404,7 @@ const months = [
 ];
 
 export default function Profile() {
+  const uid = +sessionStorage.getItem("uid");
   var { id } = useParams();
   id = parseInt(id);
 

@@ -53,7 +53,7 @@ const columns = [
  ]; */
 
 export default function Interviews() {
-
+  const uid = +sessionStorage.getItem("uid");
   // Execute the GraphQL query
   const { loading, error, data } = useQuery(GET_INTERVIEWS, {
     variables: { candidateId : 1 },

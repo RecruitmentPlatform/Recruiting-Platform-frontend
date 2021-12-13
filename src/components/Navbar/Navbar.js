@@ -130,6 +130,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Navbar() {
+  const uid = +sessionStorage.getItem("uid");
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 

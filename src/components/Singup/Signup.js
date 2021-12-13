@@ -1,4 +1,4 @@
-import { React, useContext } from 'react';
+import { React } from 'react';
 import {useHistory } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -20,7 +20,6 @@ import { LoginIdContext } from "../../AuthContext";
 export default function SignUp() {
 
     const history = useHistory();
-    const {loggedInId, setLoggedInId} = useContext(LoginIdContext);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -31,7 +30,6 @@ export default function SignUp() {
         const hash = data.get('hash');
         const res = await axios.post('https://vm-react-auth.herokuapp.com/api/signup', {"first":first, "last":last, "email":email, "password": hash});
         if(res.data.status === "success"){
-            setLoggedInId(res.data.id)
             history.push("/login?msg:"+res.data.status);
         }else{
             history.push("/signup");

@@ -63,7 +63,7 @@ const GET_COMPANIES = gql`
   }`;
 
 export default function Search() {
-
+  const uid = +sessionStorage.getItem("uid");
   let search = window.location.search;
   let params = new URLSearchParams(search);
   let query = params.get('q');

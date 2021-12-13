@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from "react";
+import {React, useState, useEffect } from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
 import { gql, useQuery } from '@apollo/client';
@@ -21,6 +21,7 @@ const GET_CANDIDATE = gql`
 const Candidate = () => {
     const location = useLocation();
     const id = location.state.id;
+    const uid = +sessionStorage.getItem("uid");
     const { loading, error, data } = useQuery(GET_CANDIDATE, {variables:{id}});
     const [isNull, setIsNull] = useState(false);
 

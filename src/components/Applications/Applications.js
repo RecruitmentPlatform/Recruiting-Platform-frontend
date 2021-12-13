@@ -1,4 +1,4 @@
-import { React, useContext} from 'react';
+import { React } from 'react';
 import { DataGrid, gridRowsLookupSelector } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -27,7 +27,7 @@ query GetApplications($candidateId: Int!){
 }`;
 
 export default function Applications() {
-
+  const uid = +sessionStorage.getItem("uid");
   // Execute the GraphQL query
   const { loading:applicationsLoading, error:applicationsError, data:applicationsData } = useQuery(GET_APPLICATIONS, {
     variables: { candidateId : 1 },

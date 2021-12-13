@@ -55,6 +55,7 @@ const GET_COMPANY = gql`
 
 
 export default function Company() {
+  const uid = +sessionStorage.getItem("uid");
   var { id } = useParams();
   id = parseInt(id);
   const { loading, error, data } = useQuery(GET_COMPANY, {variables:{id}});
