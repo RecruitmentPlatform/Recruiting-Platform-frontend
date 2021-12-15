@@ -101,8 +101,7 @@ export default function Search() {
                         id = {o.id}
                         title = {o.title}
                         description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
-                        company = {o.company.title}
-                        src = {`https://mui.com/static/images/avatar/${idx + 1}.jpg`} />
+                        company = {o.company.title} />
                       </div>)})}
                 <Typography
                   sx={{ display: "flex", mb:1, px:1 }}

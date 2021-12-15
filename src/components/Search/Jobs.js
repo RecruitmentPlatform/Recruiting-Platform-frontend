@@ -47,8 +47,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 const GET_OPENINGS = gql`
-  query Openings($query:String,$location:String){
-          openings(where: { or: [{ title: $query }, { location: $location }] }){
+  query Openings{
+          openings{
             id
             title
             description
@@ -111,7 +111,7 @@ export default function Jobs() {
   const uid = +sessionStorage.getItem("uid");
   let search = window.location.search;
   let params = new URLSearchParams(search);
-  
+
   let query = params.get('q');
   let location = params.get('l');
 
@@ -129,46 +129,47 @@ export default function Jobs() {
     console.log(openingData.opening);
   }
 
-  return (<div><Paper square sx={{mb:1}}>
-            <Container>
-              <Box
-                component="form"
-                sx={{
-                  '& > :not(style)': { m: 1 },
-                }}
-              >
-                <TextField
-                  placeholder="Job title or keywords"
-                  variant="outlined"
-                  size="small"
-                  name="q"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon/>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <TextField
-                  placeholder="Location"
-                  variant="outlined"
-                  size="small"
-                  name="l"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LocationOnIcon/>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <Button variant="contained" type="submit">Search</Button>
-              </Box>
-            </Container>
-          </Paper>
+/* <Paper square sx={{mb:1}}>
           <Container>
-            <Chip size="small" sx={{ ml:1, mb:1 }} label="Post a free job" component="a" href="/post" color="success" clickable />
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)': { m: 1 },
+              }}
+            >
+              <TextField
+                placeholder="Job title or keywords"
+                variant="outlined"
+                size="small"
+                name="q"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon/>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                placeholder="Location"
+                variant="outlined"
+                size="small"
+                name="l"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocationOnIcon/>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button variant="contained" type="submit">Search</Button>
+            </Box>
+          </Container>
+        </Paper>
+        <Chip size="small" sx={{ ml:1, mb:1 }} label="Post a free job" component="a" href="/post" color="success" clickable />*/
+  return (<div>
+          <Container sx={{pt:2}}>
             <Grid container sx={{ my: { xs: 2, md: 0 } }}>
               <Grid item md={4} sx={{px:1}}>
                     {openingsData?openingsData.openings.map((opening, id) => {return (<div style={{marginBottom:'12px'}} onClick={() => getSingleOpening({ variables: { id: opening.id } })}>

@@ -40,6 +40,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import ExperienceCard from "../Card/ExperienceCard";
 import JobListCard from "../Card/JobListCard";
+import PostCard from "../Card/PostCard";
 
 function stringToColor(string) {
   let hash = 0;
@@ -314,6 +315,46 @@ const GET_CANDIDATE_OPENINGS = gql`
     }
   }`;
 
+// Post GQL Commands
+const GET_CANDIDATE_POSTS = gql`
+  query GetCandidatePosts($id:Int!){
+    candidate(id:$id) {
+      posts {
+        id
+        date
+        status
+        content
+        opening {
+          id
+          title
+          description
+          companyId
+          location
+          employment {
+            title
+          }
+          company{
+            title
+          }
+        }
+      }
+    }
+  }`;
+
+const ADD_POST = gql`
+  mutation AddPost($candidateId:Int!,$date:Int!,$status:Int!,$content:String!,$openingId:Int) {
+    createPost(candidateId:$candidateId,date:$date,status:$status,content:$content,openingId:$openingId) {
+      id
+    }
+  }`;
+
+const DELETE_POST = gql`
+  mutation DeletePost($id:Int!) {
+    deletePost(id:$id) {
+      success
+    }
+  }`;
+
 // Skill GQL Commands
 const GET_SKILLS = gql`
   query GetSkills($id:Int!){
@@ -548,6 +589,7 @@ export default function Profile() {
   const [refreshExperiences, { loading:experiencesLoading, data:experiencesData }] = useLazyQuery(GET_EXPERIENCES, {variables:{id},fetchPolicy: 'network-only'});
   const [refreshEducations, { loading:educationsLoading, data:educationsData }] = useLazyQuery(GET_EDUCATIONS, {variables:{id},fetchPolicy: 'network-only'});
   const [refreshSkills, { loading:skillsLoading, data:skillsData }] = useLazyQuery(GET_SKILLS, {variables:{id},fetchPolicy: 'network-only'});
+  const [refreshPosts, { loading:postsLoading, data:postsData }] = useLazyQuery(GET_CANDIDATE_POSTS, {variables:{id},fetchPolicy: 'network-only'});
 
   const { loading:allskillsLoading, data:allskillsData } = useQuery(GET_ALL_SKILLS);
   const { loading:allemploymentsLoading, data:allemploymentsData } = useQuery(GET_ALL_EMPLOYMENTS);
@@ -564,6 +606,7 @@ export default function Profile() {
     refreshExperiences();
     refreshEducations();
     refreshSkills();
+    refreshPosts();
   }, []);
 
   const [updateCandidate] = useMutation(UPDATE_CANDIDATE);
@@ -572,8 +615,11 @@ export default function Profile() {
   const [deleteExperience] = useMutation(DELETE_EXPERIENCE)
 
   const [createEducation] = useMutation(ADD_EDUCATION);
-  const [editEducation] = useMutation(EDIT_EDUCATION)
+  const [editEducation] = useMutation(EDIT_EDUCATION);
   const [deleteEducation] = useMutation(DELETE_EDUCATION);
+
+  const [createPost] = useMutation(ADD_POST);
+  const [deletePost] = useMutation(DELETE_POST);
 
   const [addSkillToCandidate] = useMutation(ADD_SKILL_TO_CANDIDATE)
   const [removeSkillFromCandidate] = useMutation(REMOVE_SKILL_FROM_CANDIDATE);
@@ -620,6 +666,22 @@ export default function Profile() {
     //Refresh the experience list
     refreshExperiences();
   }
+  const handleSubmitPost = (e) =>{
+    e.preventDefault();
+    // Check if ID is set for updating
+
+    createPost({
+      variables: {
+        candidateId: id,
+        date: 123,
+        status: 1,
+        content: e.target.content.value,
+        openingId: parseInt(e.target.openingId.value),
+     }
+   });
+    //Refresh the posts list
+    refreshPosts();
+  };
   const handleDeleteExperience = () =>{
     deleteExperience({variables:{id:openId}});
     //Close the dialog
@@ -696,6 +758,7 @@ export default function Profile() {
   };
 
   if (profileLoading) return 'Loading experiences...';
+  if (postsLoading) return 'Loading posts...';
   if (openingsLoading) return 'Loading...';
   if (experiencesLoading) return 'Loading experiences...';
   if (educationsLoading) return 'Loading experiences...';
@@ -710,130 +773,130 @@ export default function Profile() {
       <Grid container>
         <Grid item md={6} xs={12} sx={{ mx: 'auto', mt:2}}>
           <Card sx={{ mb: 2 }}>
-          <Dialog open={openEditProfile} onClose={handleCloseEditProfile}>
-            <DialogTitle>Edit Profile</DialogTitle>
-            <form onSubmit={handleSubmitProfile}>
-              <DialogContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      required
-                      size="small"
-                      name="first"
-                      label="First Name"
-                      fullWidth
-                      variant="outlined"
-                      defaultValue={profileData.candidate.first}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      required
-                      size="small"
-                      name="last"
-                      label="Last Name"
-                      fullWidth
-                      variant="outlined"
-                      defaultValue={profileData.candidate.last}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      size="small"
-                      name="headline"
-                      label="Headline"
-                      fullWidth
-                      variant="outlined"
-                      defaultValue={profileData.candidate.headline}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      size="small"
-                      name="location"
-                      label="Location"
-                      fullWidth
-                      variant="outlined"
-                      defaultValue={profileData.candidate.location}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      select
-                      size="small"
-                      fullWidth
-                      name="genderId"
-                      label="Gender Identity"
-                      defaultValue={profileData.candidate.genderId?profileData.candidate.genderId:null}
-                    >
-                      {allgendersData.genders.map((gender,eid) => (
-                      <MenuItem
-                        key={eid}
-                        value={gender.id}
+            <Dialog open={openEditProfile} onClose={handleCloseEditProfile}>
+              <DialogTitle>Edit Profile</DialogTitle>
+              <form onSubmit={handleSubmitProfile}>
+                <DialogContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <TextField
+                        required
+                        size="small"
+                        name="first"
+                        label="First Name"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={profileData.candidate.first}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        required
+                        size="small"
+                        name="last"
+                        label="Last Name"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={profileData.candidate.last}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        size="small"
+                        name="headline"
+                        label="Headline"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={profileData.candidate.headline}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        size="small"
+                        name="location"
+                        label="Location"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={profileData.candidate.location}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        select
+                        size="small"
+                        fullWidth
+                        name="genderId"
+                        label="Gender Identity"
+                        defaultValue={profileData.candidate.genderId?profileData.candidate.genderId:null}
                       >
-                        {gender.title}
-                      </MenuItem>
-                       ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <TextField
-                      select
-                      size="small"
-                      fullWidth
-                      name="pronounId"
-                      label="Gender Pronoun"
-                      defaultValue={profileData.candidate.pronounId?profileData.candidate.pronounId:null}
-                    >
-                      {allpronounsData.pronouns.map((pronoun,eid) => (
-                      <MenuItem
-                        key={eid}
-                        value={pronoun.id}
+                        {allgendersData.genders.map((gender,eid) => (
+                        <MenuItem
+                          key={eid}
+                          value={gender.id}
+                        >
+                          {gender.title}
+                        </MenuItem>
+                         ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <TextField
+                        select
+                        size="small"
+                        fullWidth
+                        name="pronounId"
+                        label="Gender Pronoun"
+                        defaultValue={profileData.candidate.pronounId?profileData.candidate.pronounId:null}
                       >
-                        {pronoun.title}
-                      </MenuItem>
-                       ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      select
-                      size="small"
-                      fullWidth
-                      name="ethnicityId"
-                      label="Ethnicity"
-                      defaultValue={profileData.candidate.ethnicityId?profileData.candidate.ethnicityId:null}
-                    >
-                      {allethnicitiesData.ethnicities.map((ethnicity,eid) => (
-                      <MenuItem
-                        key={eid}
-                        value={ethnicity.id}
+                        {allpronounsData.pronouns.map((pronoun,eid) => (
+                        <MenuItem
+                          key={eid}
+                          value={pronoun.id}
+                        >
+                          {pronoun.title}
+                        </MenuItem>
+                         ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        select
+                        size="small"
+                        fullWidth
+                        name="ethnicityId"
+                        label="Ethnicity"
+                        defaultValue={profileData.candidate.ethnicityId?profileData.candidate.ethnicityId:null}
                       >
-                        {ethnicity.title}
-                      </MenuItem>
-                       ))}
-                    </TextField>
+                        {allethnicitiesData.ethnicities.map((ethnicity,eid) => (
+                        <MenuItem
+                          key={eid}
+                          value={ethnicity.id}
+                        >
+                          {ethnicity.title}
+                        </MenuItem>
+                         ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        size="small"
+                        name="description"
+                        label="Description"
+                        multiline
+                        rows={4}
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={profileData.candidate.description}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      size="small"
-                      name="description"
-                      label="Description"
-                      multiline
-                      rows={4}
-                      fullWidth
-                      variant="outlined"
-                      defaultValue={profileData.candidate.description}
-                    />
-                  </Grid>
-                </Grid>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseEditProfile}>Cancel</Button>
-                <Button type="submit">Save</Button>
-              </DialogActions>
-            </form>
-          </Dialog>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseEditProfile}>Cancel</Button>
+                  <Button type="submit">Save</Button>
+                </DialogActions>
+              </form>
+            </Dialog>
             <CardMedia
               component="img"
               height="200"
@@ -844,7 +907,7 @@ export default function Profile() {
             avatar={
               <Avatar {...stringAvatar(profileData.candidate.first+" "+profileData.candidate.last)} />
             }
-            title=<Typography component="h1" sx={{fontSize:'18px'}}>{profileData.candidate.first+" "+profileData.candidate.last}
+            title=<Typography component="h1" sx={{fontSize:'15px'}}>{profileData.candidate.first+" "+profileData.candidate.last}
                     {profileData.candidate.pronoun.title?
                     <Typography sx={{ml:0.5,fontSize:'13px'}} variant="span" color="text.secondary">
                       ({profileData.candidate.pronoun.title})
@@ -871,19 +934,75 @@ export default function Profile() {
             :null}
           </Card>
 
+          <Card sx={{ mb:2 }}>
+            <form onSubmit={handleSubmitPost}>
+              <CardContent sx={{pb:0}}>
+                <Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
+                  Create post
+                </Typography>
+                <TextField
+                  required
+                  label="What's on your mind?"
+                  multiline
+                  rows={4}
+                  variant="standard"
+                  fullWidth
+                  name="content"
+                />
+              </CardContent>
+              <CardActions sx={{px:2, pb:1}}>
+                {openingsData?
+                  <TextField
+                    select
+                    name="openingId"
+                    size="small"
+                    label="Share an Opening"
+                    sx={{width:'100%', maxWidth:'250px', mr:1}}
+                  >
+                    {openingsData.candidate.openings.map((opening, openingid) => (
+                      <MenuItem
+                        key={openingid}
+                        value={opening.id}
+                      >
+                        {opening.title}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                :null}
+                <Button variant="contained" sx={{ml:'auto'}} type="submit">Post</Button>
+              </CardActions>
+            </form>
+          </Card>
+
+          {postsData.candidate.posts.map((post, postid) => {return (<div>
+            <PostCard
+              key = {postid}
+              id = {post.id}
+              name = {profileData.candidate.first+" "+profileData.candidate.last}
+              date = {post.date}
+              content = {post.content}
+              openingId = {post.opening?post.opening.id:null}
+              job_title = {post.opening?post.opening.title:null}
+              job_description = {post.opening?post.opening.description:null}
+              job_company = {post.opening?post.opening.company.title:null}
+              job_location = {post.opening?post.opening.location:null}
+              job_employment = {post.opening?post.opening.employment?post.opening.employment.title:null:null}
+               />
+          </div>)})}
+
           {openingsData?
             <Card sx={{ mb: 2 }}>
               <CardHeader sx={{py:1}}
-                title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
+                title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                   Job Postings
                 </Typography>
               />
-              {openingsData.candidate.openings.map((o, opening_list_id) => {return (<div>
-                {opening_list_id > 0?
+              {openingsData.candidate.openings.map((o, openingid) => {return (<div>
+                {openingid > 0?
                   <Divider variant="inset"/>
                   :null}
                 <JobListCard
-                  key = {opening_list_id}
+                  key = {openingid}
                   id = {o.id}
                   title = {o.title}
                   description={o.description.length > 10 ? o.description.substring(0, 80) + "..." : o.description}
@@ -1062,7 +1181,7 @@ export default function Profile() {
                   <AddIcon />
                 </IconButton>
               }
-              title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
+              title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                 Experience
               </Typography>
             />
@@ -1237,7 +1356,7 @@ export default function Profile() {
                   <AddIcon />
                 </IconButton>
               }
-              title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
+              title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                 Education
               </Typography>
             />
@@ -1281,14 +1400,14 @@ export default function Profile() {
             </form>
           </Dialog>
 
-          <Card>
+          <Card sx={{mb:2}}>
             <CardHeader sx={{ pb: 0, pt:1 }}
               action={
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenSkill()}>
                   <AddIcon />
                 </IconButton>
               }
-              title=<Typography sx={{fontWeight:'bold', fontSize:'18px'}} component="h2">
+              title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                 Skills
               </Typography>
             />

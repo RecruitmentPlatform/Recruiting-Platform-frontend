@@ -12,7 +12,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Divider from '@mui/material/Divider';
 import {Card, CardContent, CardHeader, CardActionArea } from '@mui/material';
 
-const JobMiniCard =({id, title, description, company, src}) => {
+const JobMiniCard =({id, title, description, company, location, employment}) => {
     return (<Card sx={{mb:2}}>
         <CardActionArea href={"/job/"+id}>
           <CardHeader
@@ -21,8 +21,8 @@ const JobMiniCard =({id, title, description, company, src}) => {
             }
             title={title}
             subheader={company}
-            action=<div alignItems="center" style={{display:'flex', alignItems:'center', height:'56px'}}><Chip size="small" sx={{mr:.5}} icon={<WorkIcon />} label="Full Time" />
-            <Chip size="small" icon={<LocationOnIcon />} label="Palo Alto" /></div>
+            action=<div alignItems="center" style={{display:'flex', alignItems:'center', height:'56px'}}>{employment?<Chip size="small" sx={{mr:.5}} icon={<WorkIcon />} label={employment} />:null}
+            {location?<Chip size="small" icon={<LocationOnIcon />} label={location} />:null}</div>
           />
         </CardActionArea>
       </Card>)
