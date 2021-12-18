@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React, useContext } from 'react';
 import { useHistory } from 'react-router';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -14,11 +14,13 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from "axios";
+import { AuthContext } from "../../AuthContext";
 
 
 export default function Login() {
 
     const history = useHistory()
+    const {auth, setAuth} = useContext(AuthContext);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -30,6 +32,7 @@ export default function Login() {
 
         if(access_token){
             sessionStorage.setItem("token", access_token)
+            setAuth(access_token)
             const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
             if(res.data.status === "success"){
                 sessionStorage.setItem("uid", res.data.id)
@@ -56,7 +59,7 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -85,11 +88,11 @@ export default function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Login
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

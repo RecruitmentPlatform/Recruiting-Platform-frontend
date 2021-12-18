@@ -32,49 +32,52 @@ import Applications from "./components/Applications/Applications";
 import Interviews from "./components/Interviews/Interviews";
 import Profile from "./components/Profile/Profile";
 
-import {LoginIdContext} from "./AuthContext";
+import {AuthContext} from "./AuthContext";
 function App() {
 
+  const [auth, setAuth] = useState(sessionStorage.getItem("token"))
 
-  if(sessionStorage.getItem("token")){
+  if(auth){
     return (
-    <div className="App">
+      <div className="App">
       <Router>
+        <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>  
         <Navbar/>
+        <div /*style={{paddingLeft:'56px'}}*/>
         <Switch>
-          <Route exact path="/signup" component={Signup}/>
-          <Route exact path="/login" component={Login}/>
-          <Redirect from="*" to="/singup"/>
+          <Route path="/" exact component={Homepage}/>
+          <Route path="/admin" exact component={Admin}/>
+          {/* <Route path="/signup" exact component={Signup}/> */}
+          {/* <Route path="/login" exact component={Login}/> */}
+          <Route path="/search" exact component={Search}/>
+          <Route path="/applications/" exact component={Applications}/>
+          <Route path="/interviews/" exact component={Interviews}/>
+          <Route path="/jobs" exact component={Jobs}/>
+          <Route path="/job/:id" exact component={Job}/>
+          <Route path="/company/:id" exact component={Company}/>
+          <Route path="/u/:id" exact component={Profile}/>
+          {/* <Route path="/settings" exact component={Settings}/> */}
+          <Route path="/companies" exact component={Companies}/>
+          <Redirect from="*" to="/"/>
         </Switch>
+        </div>
+        </AuthContext.Provider>
       </Router>
     </div>
   )}else{
-    return (
-      <div className="App">
-        <Router>
-          {/* <LoginIdContext.Provider value={{loggedInId:loggedInId, setLoggedInId:setLoggedInId}}> */}
+    return (<div className="App">
+      <Router>
+        <Switch>
+          <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}> 
           <Navbar/>
-          <div /*style={{paddingLeft:'56px'}}*/>
-          <Switch>
-            <Route path="/" exact component={Homepage}/>
-            <Route path="/admin" exact component={Admin}/>
-            {/* <Route path="/signup" exact component={Signup}/> */}
             <Route path="/login" exact component={Login}/>
-            <Route path="/search" exact component={Search}/>
-            <Route path="/applications/" exact component={Applications}/>
-            <Route path="/interviews/" exact component={Interviews}/>
-            <Route path="/jobs" exact component={Jobs}/>
-            <Route path="/job/:id" exact component={Job}/>
-            <Route path="/company/:id" exact component={Company}/>
-            <Route path="/u/:id" exact component={Profile}/>
-            {/* <Route path="/settings" exact component={Settings}/> */}
-            <Route path="/companies" exact component={Companies}/>
-            <Redirect from="*" to="/"/>
-          </Switch>
-          </div>
-          {/* </LoginIdContext.Provider> */}
+            <Route path="/signup" exact component={Signup}/>
+            <Route path="/" exact component={Login}/>
+            {/* <Route path="/*" render={() => <Redirect to="/login" />} /> */}
+          </AuthContext.Provider>
+        </Switch>
         </Router>
-      </div>
+    </div>
     )
   }
 }
