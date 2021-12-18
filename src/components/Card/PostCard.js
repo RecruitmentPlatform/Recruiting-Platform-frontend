@@ -1,4 +1,4 @@
-import {React, Fragment, useEffect, useState} from "react";
+import React, { Fragment, useEffect, useState} from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -12,8 +12,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Divider from '@mui/material/Divider';
 import {Card, CardContent, CardHeader, CardActionArea } from '@mui/material';
 import JobMiniCard from "../Card/JobMiniCard";
-
-
+import Moment from 'react-moment';
 function stringAvatar(name) {
   return {
     sx: {
@@ -41,11 +40,13 @@ function stringToColor(string) {
 
   return color;
 }
+
 const PostCard =({id, name, date, content, openingId, job_title, job_description, job_company, job_employment, job_location}) => {
     return (<Card sx={{mb:2}}>
               <CardHeader
                 avatar={<Avatar {...stringAvatar(name)} />}
                 title={name}
+                subheader=<Moment unix fromNow>{date}</Moment>
               />
               <CardContent sx={{pt:0}}>
               {content}

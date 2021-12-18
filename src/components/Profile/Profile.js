@@ -42,6 +42,8 @@ import ExperienceCard from "../Card/ExperienceCard";
 import JobListCard from "../Card/JobListCard";
 import PostCard from "../Card/PostCard";
 
+import Moment from 'react-moment';
+
 function stringToColor(string) {
   let hash = 0;
   let i;
@@ -673,7 +675,7 @@ export default function Profile() {
     createPost({
       variables: {
         candidateId: id,
-        date: 123,
+        date: Math.floor(Date.now() / 1000),
         status: 1,
         content: e.target.content.value,
         openingId: parseInt(e.target.openingId.value),

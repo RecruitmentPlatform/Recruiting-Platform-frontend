@@ -13,7 +13,7 @@ import Divider from '@mui/material/Divider';
 import {Card, CardContent, CardHeader, CardActionArea } from '@mui/material';
 
 const JobMiniCard =({id, title, description, company, location, employment}) => {
-    return (<Card sx={{mb:2}}>
+    return (<Card>
         <CardActionArea href={"/job/"+id}>
           <CardHeader
             avatar={
