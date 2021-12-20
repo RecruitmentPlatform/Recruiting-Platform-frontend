@@ -159,16 +159,7 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Search action="/search"
-          method="GET">
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search..."
-              inputProps={{ "aria-label": "search","name":"q" }}
-            />
-          </Search>
+          
           <Box sx={{ flexGrow: 1 }} />
           <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
         </Toolbar>

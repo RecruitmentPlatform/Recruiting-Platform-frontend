@@ -20,7 +20,8 @@ const theme = createTheme({
   palette: {
     background: {
       default: "#f1f1f1"
-    }
+    },
+    card: { border:"1px solid #eee !important" },
   }
 });
 

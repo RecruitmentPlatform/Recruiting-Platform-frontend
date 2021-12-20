@@ -45,8 +45,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
 const GET_COMPANIES = gql`
-  query Companies($query:String){
-    companies(where:{title:$query}){
+  query Companies{
+    companies{
       id
       title
       description
@@ -55,6 +55,7 @@ const GET_COMPANIES = gql`
 
 export default function Jobs() {
   const uid = +sessionStorage.getItem("uid");
+
   let search = window.location.search;
   let params = new URLSearchParams(search);
   let query = params.get('q');
@@ -102,14 +103,14 @@ export default function Jobs() {
             </Container>
           </Paper>
           <Container>
-            <Grid container sx={{ mx: 'auto' }}>
-              <Grid item md={4} sx={{px:1}}>
+            <Grid container>
+              <Grid item lg={6} sx={{px:1, mx:'auto'}}>
                     {companiesData?companiesData.companies.map((company, id) => {return (<div style={{marginBottom:'12px'}}>
                       <CompanyCard
                         key = {id}
                         id = {company.id}
                         title = {company.title}
-                        description = {company.description} />
+                        description = {company.description.length > 10 ? company.description.substring(0, 70) + "..." : company.description} />
                       </div>)}):"No companies found."}
               </Grid>
             </Grid>

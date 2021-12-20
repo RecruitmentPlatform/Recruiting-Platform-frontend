@@ -76,6 +76,7 @@ const GET_SINGLE_OPENING = gql`
     opening(id:$id){
       id
       title
+      date
       description
       location
       startMonth
@@ -129,46 +130,48 @@ export default function Jobs() {
     console.log(openingData.opening);
   }
 
-/* <Paper square sx={{mb:1}}>
-          <Container>
-            <Box
-              component="form"
-              sx={{
-                '& > :not(style)': { m: 1 },
-              }}
-            >
-              <TextField
-                placeholder="Job title or keywords"
-                variant="outlined"
-                size="small"
-                name="q"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon/>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                placeholder="Location"
-                variant="outlined"
-                size="small"
-                name="l"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LocationOnIcon/>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button variant="contained" type="submit">Search</Button>
-            </Box>
-          </Container>
-        </Paper>
-        <Chip size="small" sx={{ ml:1, mb:1 }} label="Post a free job" component="a" href="/post" color="success" clickable />*/
+
   return (<div>
+            <Paper square sx={{mb:1}}>
+              <Container>
+                <Box
+                  component="form"
+                  sx={{
+                    '& > :not(style)': { m: 1 },
+                  }}
+                >
+                  <TextField
+                    disabled
+                    placeholder="Job title or keywords"
+                    variant="outlined"
+                    size="small"
+                    name="q"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon/>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    disabled
+                    placeholder="Location"
+                    variant="outlined"
+                    size="small"
+                    name="l"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LocationOnIcon/>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <Button variant="contained" type="submit">Search</Button>
+                </Box>
+              </Container>
+            </Paper>
           <Container sx={{pt:2}}>
             <Grid container sx={{ my: { xs: 2, md: 0 } }}>
               <Grid item md={4} sx={{px:1}}>
@@ -178,8 +181,6 @@ export default function Jobs() {
                         candidate_id = {opening.candidateId}
                         title = {opening.title}
                         description={opening.description.length > 10 ? opening.description.substring(0, 80) + "..." : opening.description}
-                        first = {opening.candidate.first}
-                        last = {opening.candidate.last}
                         location = {opening.location}
                         company = {opening.company.title}
                         employment = {opening.employment.title} />
@@ -190,6 +191,7 @@ export default function Jobs() {
                 <JobSingleCard
                   id = {openingData.opening.id}
                   title = {openingData.opening.title}
+                  date = {openingData.opening.date}
                   company = {openingData.opening.company.title}
                   companyId = {openingData.opening.companyId}
                   companyDescription = {openingData.opening.company.description}

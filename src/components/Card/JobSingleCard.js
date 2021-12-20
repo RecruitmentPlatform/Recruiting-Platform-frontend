@@ -32,8 +32,9 @@ import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import CompanyCard from "../Card/CompanyCard";
+import Moment from 'react-moment';
 
-const JobSingleCard =({id,title,company,companyId,companyDescription,description,website,employment,location,salaryLow,salaryHigh,candidateId,first,last}) => {
+const JobSingleCard =({id,title,company,date, companyId,companyDescription,description,website,employment,location,salaryLow,salaryHigh,candidateId,first,last}) => {
   const CREATE_APPLICATION = gql`
   mutation CreateApplication($date:Int!, $openingId:Int!, $candidateId:Int!,$status:Int!) {
         createApplication(date:$date, openingId: $openingId, candidateId: $candidateId, status: $status){
@@ -77,7 +78,7 @@ const JobSingleCard =({id,title,company,companyId,companyDescription,description
 
             clickable
           />
-          <Chip size="small" icon={<AccessTimeFilledIcon />} label="2 hours ago"  />
+          <Chip size="small" icon={<AccessTimeFilledIcon />} label=<Moment unix fromNow>{date}</Moment>  />
         </Stack>
       </CardContent>
       <Divider/>

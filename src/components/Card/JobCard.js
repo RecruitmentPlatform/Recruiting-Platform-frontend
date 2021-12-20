@@ -15,20 +15,9 @@ import Divider from '@mui/material/Divider';
 import {Card, CardContent, CardHeader, CardActionArea } from '@mui/material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
-const JobCard =({id, title, description, candidate_id, first, last, location, salaryLow, salaryHigh, company, employment}) => {
+const JobCard =({id, title, description, candidate_id, location, salaryLow, salaryHigh, company, employment}) => {
     return (<Card>
-        <CardActionArea href={"/job/"+id}>
-          <CardContent sx={{ py: 1 }}>
-          <Typography
-              sx={{ pb: 0 }}
-              component="p"
-              variant="body4"
-              color="text.secondary"
-              >
-              <Box component="a" href={"/u/"+candidate_id} sx={{color:'#000', textDecoration:'none'}} fontWeight='bold'>{first + " " + last}</Box> posted this job on April 14, 2021
-            </Typography>
-          </CardContent>
-          <Divider/>
+        <CardActionArea>
           <CardHeader
             sx={{pb:0}}
             avatar={

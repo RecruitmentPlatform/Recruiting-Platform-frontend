@@ -1,5 +1,5 @@
 import {React, useState, useContext, useEffect} from "react";
-import {Link, useHistory } from "react-router-dom"; //for routing
+import { useHistory } from "react-router-dom"; //for routing
 import { AuthContext } from "../../AuthContext";
 import axios from "axios"
 
@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 
 import JobCard from "../Card/JobCard";
 
@@ -21,9 +22,10 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
+import PublicIcon from '@mui/icons-material/Public';
 import Avatar from '@mui/material/Avatar';
 
-import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
+import { Card, CardMedia, CardHeader, CardContent, CardActionArea, CardActions } from '@mui/material';
 
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 
@@ -57,7 +59,30 @@ function stringAvatar(name) {
     children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
 }
-
+// Candidate GQL Commands
+const GET_CANDIDATE = gql`
+  query GetCandidate($id:Int!){
+    candidate(id:$id) {
+      id
+      first
+      last
+      headline
+      location
+      description
+      genderId
+      gender {
+        title
+      }
+      pronounId
+      pronoun {
+        title
+      }
+      ethnicityId
+      ethnicity {
+        title
+      }
+    }
+  }`;
 // Post GQL Commands
 const GET_ALL_POSTS = gql`
   query GetAllPosts{
@@ -119,6 +144,8 @@ const GET_CANDIDATE_OPENINGS = gql`
 export default function Homepage() {
   const [refreshPosts, { loading:postsLoading, data:postsData }] = useLazyQuery(GET_ALL_POSTS, {fetchPolicy: 'network-only'});
 
+  const { loading:profileLoading, error:profileError, data:profileData } = useQuery(GET_CANDIDATE, {variables:{id:1}});
+
   const { data:openingsData, loading:openingsLoading } = useQuery(GET_CANDIDATE_OPENINGS, {variables:{id:1}});
 
   const [createPost] = useMutation(ADD_POST);
@@ -132,7 +159,7 @@ export default function Homepage() {
     createPost({
       variables: {
         candidateId: 1,
-        date: 123,
+        date: Math.floor(Date.now() / 1000),
         status: 1,
         content: e.target.content.value,
         openingId: parseInt(e.target.openingId.value),
@@ -145,26 +172,28 @@ export default function Homepage() {
   useEffect(() => { refreshPosts();}, []);
 
   if(openingsLoading) return 'Loading openings...';
+  if(profileLoading) return 'Loading profile...';
   if(postsLoading) return 'Loading posts...';
 
-  return (
-    <Box
-      sx={{
-        bgcolor: 'background.primary',
-        pt: 8,
-        pb: 6,
-      }}
-    >
-      <Container maxWidth="sm">
-        <Typography
-          component="h1"
-          variant="h2"
-          align="center"
-          color="text.primary"
-          gutterBottom
-        >
-          Begin Searching
-        </Typography>
+  return (<Container sx={{my:2}}>
+  <Grid container spacing={2}>
+    <Grid item md={4} xs={12}>
+      <Card>
+        <CardHeader
+        avatar={
+          <Avatar {...stringAvatar(profileData.candidate.first+" "+profileData.candidate.last)} />
+        }
+        title=<Typography component="h1" sx={{fontSize:'15px'}}><Link href={"/u/"+profileData.candidate.id} underline="hover">{profileData.candidate.first+" "+profileData.candidate.last}</Link>
+                {profileData.candidate.pronoun.title?
+                <Typography sx={{ml:0.5,fontSize:'13px'}} variant="span" color="text.secondary">
+                  ({profileData.candidate.pronoun.title})
+                </Typography>:null}
+              </Typography>
+        subheader={profileData.candidate.headline}
+        />
+      </Card>
+    </Grid>
+    <Grid item md={8} xs={12}>
         <Card sx={{ mb:2 }}>
           <form onSubmit={handleSubmitPost}>
           <CardHeader
@@ -181,7 +210,7 @@ export default function Homepage() {
                 required
                 label="What's on your mind?"
                 multiline
-                rows={4}
+                rows={3}
                 variant="standard"
                 fullWidth
                 name="content"
@@ -210,7 +239,6 @@ export default function Homepage() {
             </CardActions>
           </form>
         </Card>
-
         {postsData.posts.map((post, postid) => {return (<div>
           <PostCard
             key = {postid}
@@ -226,7 +254,7 @@ export default function Homepage() {
             job_employment = {post.opening?post.opening.employment?post.opening.employment.title:null:null}
              />
         </div>)})}
-
-      </Container>
-    </Box>)
+      </Grid>
+    </Grid>
+  </Container>)
   }
