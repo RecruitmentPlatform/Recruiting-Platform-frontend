@@ -31,19 +31,14 @@ export default function Login() {
         const access_token = res.data.access_token;
 
         if(access_token){
-            sessionStorage.setItem("token", access_token)
-            setAuth(access_token)
-            const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
-            if(res.data.status === "success"){
-                sessionStorage.setItem("uid", res.data.id)
-                alert("Logged in successfully");
-                history.push("/");
-            }else{
-            history.push("/login");
-            }
-         }
+          sessionStorage.setItem("token", access_token);
+          setAuth(access_token)
+          history.push("/")
+        }else{
+          history.push("/login")
+        }
         };
-
+        
   return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />

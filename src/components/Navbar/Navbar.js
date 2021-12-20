@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { styled, alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -170,7 +171,7 @@ export default function Navbar() {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
+          <Link><Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" /></Link>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
