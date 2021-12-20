@@ -172,7 +172,7 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Search action="/search"
+          {/* <Search action="/search"
           method="GET">
             <SearchIconWrapper>
               <SearchIcon />
@@ -181,7 +181,7 @@ export default function Navbar() {
               placeholder="Search..."
               inputProps={{ "aria-label": "search","name":"q" }}
             />
-          </Search>
+          </Search>*/}
           <Box sx={{ flexGrow: 1 }} />
           <div onClick={logout}>
             <LogoutIcon />
