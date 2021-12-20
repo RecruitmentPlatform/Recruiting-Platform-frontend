@@ -13,20 +13,10 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import {Card, CardContent, CardHeader, CardActions, CardActionArea } from '@mui/material';
 
-const ApplicationCard =({title, company }) => {
+const ApplicationCard =({opening_id, title, company }) => {
     return (<Card sx={{mb:2}}>
-              <CardContent sx={{ pb: 1 }}>
-                <Typography
-                    sx={{ pb: 0 }}
-                    component="p"
-                    variant="body2"
-                    color="text.secondary"
-                    >
-                    Applied on April 14, 2021
-                  </Typography>
-              </CardContent>
+            <CardActionArea href={"/job/"+opening_id}>
               <CardHeader
-                sx={{py:0}}
                 avatar={
                   <Avatar alt={company} src={"//logo.clearbit.com/"+company.toLowerCase()+".com"} />
                 }
@@ -42,10 +32,7 @@ const ApplicationCard =({title, company }) => {
                   <Chip size="small" icon={<LocationOnIcon />} label="Palo Alto" />
                 </Typography>
               />
-              <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions>
+              </CardActionArea>
             </Card>)
 
 }

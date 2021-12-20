@@ -92,6 +92,7 @@ const GET_ALL_POSTS = gql`
       status
       content
       candidate {
+        id
         first
         last
       }
@@ -142,15 +143,15 @@ const GET_CANDIDATE_OPENINGS = gql`
   }`;
 
 export default function Homepage() {
+  const uid = +sessionStorage.getItem("uid");
+
   const [refreshPosts, { loading:postsLoading, data:postsData }] = useLazyQuery(GET_ALL_POSTS, {fetchPolicy: 'network-only'});
 
-  const { loading:profileLoading, error:profileError, data:profileData } = useQuery(GET_CANDIDATE, {variables:{id:1}});
+  const { loading:profileLoading, error:profileError, data:profileData } = useQuery(GET_CANDIDATE, {variables:{id:parseInt(uid)}});
 
   const { data:openingsData, loading:openingsLoading } = useQuery(GET_CANDIDATE_OPENINGS, {variables:{id:1}});
 
   const [createPost] = useMutation(ADD_POST);
-
-  const uid = +sessionStorage.getItem("uid");
 
   const handleSubmitPost = (e) =>{
     e.preventDefault();
@@ -158,7 +159,7 @@ export default function Homepage() {
 
     createPost({
       variables: {
-        candidateId: 1,
+        candidateId: parseInt(uid),
         date: Math.floor(Date.now() / 1000),
         status: 1,
         content: e.target.content.value,
@@ -243,6 +244,7 @@ export default function Homepage() {
           <PostCard
             key = {postid}
             id = {post.id}
+            user_id = {post.candidate.id}
             name = {post.candidate.first + " " + post.candidate.last}
             date = {post.date}
             content = {post.content}

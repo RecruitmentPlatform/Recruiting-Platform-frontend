@@ -23,26 +23,26 @@ export default function Login() {
     const {auth, setAuth} = useContext(AuthContext);
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const email = data.get('email');
-        const hash = data.get('hash');
-        const res = await axios.post('http://127.0.0.1:5000/auth', {"username":email, "password": hash});
-        const access_token = res.data.access_token;
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const email = data.get('email');
+      const hash = data.get('hash');
+      const res = await axios.post('http://127.0.0.1:5000/auth', {"username":email, "password": hash});
+      const access_token = res.data.access_token;
 
-        if(access_token){
-            sessionStorage.setItem("token", access_token)
-            setAuth(access_token)
-            const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
-            if(res.data.status === "success"){
-                sessionStorage.setItem("uid", res.data.id)
-                alert("Logged in successfully");
-                history.push("/");
-            }else{
-            history.push("/login");
-            }
-         }
-        };
+      if(access_token){
+        sessionStorage.setItem("token", access_token)
+        setAuth(access_token)
+        const res = await axios.get('http://127.0.0.1:5000/protected', { headers: { Authorization: `JWT ${access_token}` }})
+        if(res.data.status === "success"){
+            sessionStorage.setItem("uid", res.data.id)
+            alert("Logged in successfully");
+            history.push("/");
+        }else{
+        history.push("/login");
+        }
+     }
+    };
 
   return (
       <Container component="main" maxWidth="xs">

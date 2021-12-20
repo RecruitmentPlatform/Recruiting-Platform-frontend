@@ -1,5 +1,7 @@
-import * as React from 'react';
+import { React, useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { styled, alpha, useTheme } from '@mui/material/styles';
+import { useHistory } from 'react-router';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer from '@mui/material/Drawer';
@@ -24,6 +26,8 @@ import WorkIcon from '@mui/icons-material/Work';
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Container from "@mui/material/Container";
+import { AuthContext } from "../../AuthContext";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth = 240;
 
@@ -130,9 +134,18 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Navbar() {
+  const history = useHistory()
+  const {auth, setAuth} = useContext(AuthContext);
   const uid = +sessionStorage.getItem("uid");
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
+  const logout = () => {
+    setAuth("")
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("uid");
+    history.push("/login")
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -159,9 +172,21 @@ export default function Navbar() {
           >
             <MenuIcon />
           </IconButton>
-          
+          <Search action="/search"
+          method="GET">
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search..."
+              inputProps={{ "aria-label": "search","name":"q" }}
+            />
+          </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" />
+          <div onClick={logout}>
+            <LogoutIcon />
+          </div>
+          {/* <Link><Avatar alt="Ali Connors" src="https://mui.com/static/images/avatar/3.jpg" /></Link> */}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

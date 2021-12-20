@@ -76,6 +76,7 @@ function stringAvatar(name) {
 const GET_CANDIDATE = gql`
   query GetCandidate($id:Int!){
     candidate(id:$id) {
+      id
       first
       last
       headline
@@ -674,7 +675,7 @@ export default function Profile() {
 
     createPost({
       variables: {
-        candidateId: id,
+        candidateId: uid,
         date: Math.floor(Date.now() / 1000),
         status: 1,
         content: e.target.content.value,
@@ -697,7 +698,7 @@ export default function Profile() {
     if(openId != null) {
       editEducation({
         variables: {
-          candidateId: id,
+          candidateId: uid,
           id: openId,
           collegeName: e.target.collegeName.value,
           collegeId: selectedCollegeId,
@@ -715,7 +716,7 @@ export default function Profile() {
     else {
       createEducation({
         variables: {
-          candidateId: id,
+          candidateId: uid,
           collegeName: e.target.collegeName.value,
           collegeId: selectedCollegeId,
           degreeId: parseInt(e.target.degreeId.value),
@@ -741,7 +742,7 @@ export default function Profile() {
     refreshEducations();
   };
   const handleRemoveSkill = (skill_id) => {
-    removeSkillFromCandidate({variables:{id:skill_id,candidateId:id}})
+    removeSkillFromCandidate({variables:{id:skill_id,candidateId:uid}})
     refreshSkills();
   };
   const handleSubmitSkill = (e) =>{
@@ -749,7 +750,7 @@ export default function Profile() {
     // Check if ID is set for updating
     addSkillToCandidate({
       variables: {
-        candidateId: id,
+        candidateId: uid,
         id: parseInt(selectedSkillId),
      }
     });
@@ -759,7 +760,7 @@ export default function Profile() {
     refreshSkills();
   };
 
-  if (profileLoading) return 'Loading experiences...';
+   if (profileLoading) return 'Loading experiences...';
   if (postsLoading) return 'Loading posts...';
   if (openingsLoading) return 'Loading...';
   if (experiencesLoading) return 'Loading experiences...';
@@ -916,9 +917,11 @@ export default function Profile() {
                     </Typography>:null}
                   </Typography>
             subheader={profileData.candidate.headline}
-            action={<IconButton aria-label="settings" onClick = {() => handleClickOpenEditProfile()}>
+            action={parseInt(uid) == parseInt(id) ?
+                    <IconButton aria-label="settings" onClick = {() => handleClickOpenEditProfile()}>
                       <EditIcon />
-                    </IconButton>}
+                    </IconButton>
+                    :null}
             />
             {profileData.candidate.description || profileData.candidate.location ?
               <CardContent sx={{pt:0}}>
@@ -935,7 +938,7 @@ export default function Profile() {
               </CardContent>
             :null}
           </Card>
-
+          {parseInt(uid) == parseInt(id) ?
           <Card sx={{ mb:2 }}>
             <form onSubmit={handleSubmitPost}>
               <CardContent sx={{pb:0}}>
@@ -974,12 +977,13 @@ export default function Profile() {
                 <Button variant="contained" sx={{ml:'auto'}} type="submit">Post</Button>
               </CardActions>
             </form>
-          </Card>
+          </Card>:null}
 
           {postsData.candidate.posts.map((post, postid) => {return (<div>
             <PostCard
               key = {postid}
               id = {post.id}
+              user_id = {profileData.candidate.id}
               name = {profileData.candidate.first+" "+profileData.candidate.last}
               date = {post.date}
               content = {post.content}
@@ -1178,11 +1182,11 @@ export default function Profile() {
 
           <Card sx={{ mb: 2 }}>
             <CardHeader sx={{py:1}}
-              action={
+              action={parseInt(uid) == parseInt(id) ?
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenExperience()}>
                   <AddIcon />
                 </IconButton>
-              }
+              :null}
               title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                 Experience
               </Typography>
@@ -1353,11 +1357,11 @@ export default function Profile() {
 
           <Card sx={{ mb: 2 }}>
             <CardHeader sx={{py:1}}
-              action={
+              action={parseInt(uid) == parseInt(id) ?
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenEducation()}>
                   <AddIcon />
                 </IconButton>
-              }
+              :null}
               title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                 Education
               </Typography>
@@ -1404,11 +1408,11 @@ export default function Profile() {
 
           <Card sx={{mb:2}}>
             <CardHeader sx={{ pb: 0, pt:1 }}
-              action={
+              action={parseInt(uid) == parseInt(id) ?
                 <IconButton aria-label="edit" onClick = {() => handleClickOpenSkill()}>
                   <AddIcon />
                 </IconButton>
-              }
+              :null}
               title=<Typography sx={{fontWeight:'bold', fontSize:'15px'}} component="h2">
                 Skills
               </Typography>

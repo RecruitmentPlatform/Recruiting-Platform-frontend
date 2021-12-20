@@ -35,12 +35,15 @@ import Profile from "./components/Profile/Profile";
 import {AuthContext} from "./AuthContext";
 function App() {
 
+  const [auth, setAuth] = useState(sessionStorage.getItem("token"))
+
+  if(auth){
     return (
       <div className="App">
       <Router>
-
+        <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
         <Navbar/>
-        <div>
+        <div /*style={{paddingLeft:'56px'}}*/>
         <Switch>
           <Route path="/" exact component={Homepage}/>
           <Route path="/admin" exact component={Admin}/>
@@ -58,10 +61,25 @@ function App() {
           <Redirect from="*" to="/"/>
         </Switch>
         </div>
-
+        </AuthContext.Provider>
       </Router>
     </div>
-  )}
-
+  )}else{
+    return (<div className="App">
+      <Router>
+        <Switch>
+          <AuthContext.Provider value={{auth:auth, setAuth:setAuth}}>
+          <Navbar/>
+            <Route path="/login" exact component={Login}/>
+            <Route path="/signup" exact component={Signup}/>
+            <Route path="/" exact component={Login}/>
+            {/* <Route path="/*" render={() => <Redirect to="/login" />} /> */}
+          </AuthContext.Provider>
+        </Switch>
+        </Router>
+    </div>
+    )
+  }
+}
 
 export default App;

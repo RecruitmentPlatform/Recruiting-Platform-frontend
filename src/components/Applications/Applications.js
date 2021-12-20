@@ -17,6 +17,7 @@ query GetApplications($candidateId: Int!){
     status
     openingId
     opening{
+      id
       title
       companyId
       company{
@@ -51,6 +52,7 @@ export default function Applications() {
                 {applicationsData.applications.map((application, idx) => {return (<div>
                   <ApplicationCard
                     key = {idx}
+                    opening_id = {application.opening.id}
                     title = {application.opening.title}
                     company = {application.opening.company.title}
                     />

@@ -41,13 +41,15 @@ function stringToColor(string) {
   return color;
 }
 
-const PostCard =({id, name, date, content, openingId, job_title, job_description, job_company, job_employment, job_location}) => {
+const PostCard =({id, user_id, name, date, content, openingId, job_title, job_description, job_company, job_employment, job_location}) => {
     return (<Card sx={{mb:2}}>
+              <CardActionArea href={"/u/"+user_id}>
               <CardHeader
                 avatar={<Avatar {...stringAvatar(name)} />}
                 title={name}
                 subheader=<Moment unix fromNow>{date}</Moment>
               />
+              </CardActionArea>
               <CardContent sx={{pt:0}}>
               {content}
               {openingId?
