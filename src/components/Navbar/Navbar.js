@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { React, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled, alpha, useTheme } from '@mui/material/styles';
 import { useHistory } from 'react-router';
@@ -138,7 +138,7 @@ export default function Navbar() {
   const {auth, setAuth} = useContext(AuthContext);
   const uid = +sessionStorage.getItem("uid");
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const logout = () => {
     setAuth("")
