@@ -214,7 +214,7 @@ export default function Navbar() {
           Manage
         </Typography>
         <List>
-          {['Applications', 'Interviews'].map((text, index) => (
+          {['Applications'].map((text, index) => (
             <ListItem button component="a" href={"/"+text.toLowerCase()} key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
